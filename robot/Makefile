@@ -20,17 +20,20 @@ configure:
 	@echo "\n\n\`make install\` to install generated files\n\n"
 
 install:
-	install -d ${INSTALL_DIR}/bin/  ${INSTALL_DIR}/etc/${ROBOT}/hrprtc/
-	install rtcd.sh			${INSTALL_DIR}/bin/
-	install Robot.conf		${INSTALL_DIR}/etc/${ROBOT}/hrprtc/
-	install rtcdRobotMode.conf	${INSTALL_DIR}/etc/${ROBOT}/hrprtc/
+	mkdir -p ${INSTALL_DIR}/bin/ ${INSTALL_DIR}/etc/${ROBOT}/hrprtc/
+	cp rtcd.sh		${INSTALL_DIR}/bin/ && chmod u+x ${INSTALL_DIR}/bin/rtcd.sh
+	cp NameServer.sh	${INSTALL_DIR}/bin/ && chmod u+x ${INSTALL_DIR}/bin/NameServer.sh
+	cp ModelLoader.sh	${INSTALL_DIR}/bin/ && chmod u+x ${INSTALL_DIR}/bin/ModelLoader.sh
+	cp startJSK.sh		${INSTALL_DIR}/bin/ && chmod u+x ${INSTALL_DIR}/bin/startJSK.sh
+	cp Robot.conf		${INSTALL_DIR}/etc/${ROBOT}/hrprtc/
+	cp rtcdRobotMode.conf	${INSTALL_DIR}/etc/${ROBOT}/hrprtc/
 
 test.linux:
 	make -f Makefile configure install \
 		MODULE_LOAD_PATH=`rospack find hrpsys`/lib \
 		INSTALL_DIR=/tmp
 	@mkdir -p /tmp/etc/HIRONX/model/
-	@cp `rospack find hironx_ros_bridge`/models/kawada-hironx.dae /tmp/etc/HIRONX/model/main_dof15.wrl
+	@cp `rospack find hironx_ros_bridge`/models/kawada-hironx.dae /tmp/etc/HIRONX/model/main.wrl
 	@rosrun openrtm_aist rtm-naming 15005 || (sh -c '/bin/echo -e "\e[1;32m\nplease try\n pkill -9 openhrp-model-l; pkill -9 rtcd; pkill -9 omniNames\n and make test.inux again\e[0m"'; false)
 	@rosrun openhrp3 openhrp-model-loader -ORBInitRef NameService=corbaloc:iiop:localhost:15005/NameService &
 	@rosrun openrtm_aist rtcd -f /tmp/etc/${ROBOT}/hrprtc/rtcdRobotMode.conf &
