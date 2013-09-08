@@ -14,7 +14,7 @@ import OpenRTM_aist.RTM_IDL
 import rtm
 import OpenHRP
 
-from hrpsys_config import HrpsysConfigurator
+from hrpsys_config import *
 
 from waitInput import waitInputConfirm, waitInputSelect
 
@@ -77,6 +77,7 @@ class HIRONX(HrpsysConfigurator):
             ['seq', "SequencePlayer"],
             ['sh', "StateHolder"],
             ['fk', "ForwardKinematics"],
+            ['el', "SoftErrorLimiter"],
             # ['co', "CollisionDetector"],
             ['sc', "ServoController"],
             ['log', "DataLogger"]
@@ -107,6 +108,12 @@ class HIRONX(HrpsysConfigurator):
         else:
             for h in self.HandGroups.keys():
                 self.setHandJointAngles(h, self.hand_width2angles(width), tm)
+
+    def moveHand(self, hand, av, tm=1) : # direction av : + for open, - for close
+        for i in [2, 3, 6, 7]: # do not change this line if servo is difference, change HandGroups
+            av[i] = -av[i]
+        self.setHandJointAngles(hand, av, tm)
+
     def hand_width2angles(self, width):
         safetyMargin = 3
         l1, l2 = (41.9, 19)
@@ -332,6 +339,5 @@ if __name__ == '__main__':
 # $ ./hironx.py
 #
 # for real robot
-# ./hironx.py RobotHardware0 -ORBInitRef NameService=corbaloc:iiop:hiro014:2809/NameService
-# ipython -i ./hironx.py RobotHardware0 -- -ORBInitRef NameService=corbaloc:iiop:hiro014:2809/NameService
-
+# ./hironx.py  RobotHardware0  /opt/jsk/etc/HIRONX/model/main.wrl -- -ORBInitRef NameService=corbaloc:iiop:hiro014:15005/NameService
+# ipython -i hironx.py  RobotHardware0  /opt/jsk/etc/HIRONX/model/main.wrl -- -ORBInitRef NameService=corbaloc:iiop:hiro014:15005/NameService

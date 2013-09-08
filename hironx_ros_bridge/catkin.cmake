@@ -3,7 +3,12 @@ project(hironx_ros_bridge)
 
 find_package(catkin REQUIRED COMPONENTS hrpsys_ros_bridge)
 
-catkin_package()
+catkin_package(
+    DEPENDS # TODO
+    CATKIN-DEPENDS hrpsys_ros_bridge #
+    INCLUDE_DIRS # TODO include
+    LIBRARIES # TODO
+)
 
 add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/models/kawada-hironx.dae
   COMMAND ${catkin_EXTRAS_DIR}/test/download_checkmd5.py
@@ -16,14 +21,12 @@ add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/models/kawada-hironx.dae
 # commit generated files due to  https://code.google.com/p/rtm-ros-robotics/issues/detail?id=187
 #compile_collada_model(${PROJECT_SOURCE_DIR}/models/kawada-hironx.dae)
 
+# set HIRONX_ROS_BRIDGE and OPENHRP3 for configure_file
 set(HIRONX_ROS_BRIDGE ${PROJECT_SOURCE_DIR})
-if(EXISTS ${openhrp3_SOURCE_DIR})
-  set(OPENHRP3 ${openhrp3_OSURCE_DIR})
-else()
-  find_package(PkgConfig)
-  pkg_check_modules(openhrp3 openhrp3.1 REQUIRED)
-  set(OPENHRP3 ${openhrp3_PREFIX}/share/openhrp3)
-endif()
+find_package(PkgConfig)
+pkg_check_modules(openhrp3 openhrp3.1 REQUIRED)
+set(OPENHRP3 ${openhrp3_PREFIX}/share/openhrp3)
+ 
 configure_file(models/kawada-hironx.RobotHardware.conf.in       ${PROJECT_SOURCE_DIR}/models/kawada-hironx.RobotHardware.conf)
 configure_file(models/kawada-hironx_nosim.RobotHardware.conf.in ${PROJECT_SOURCE_DIR}/models/kawada-hironx_nosim.RobotHardware.conf)
 configure_file(models/kawada-hironx.xml.in                      ${PROJECT_SOURCE_DIR}/models/kawada-hironx.xml)
@@ -35,7 +38,7 @@ add_custom_target(model_files ALL DEPENDS ${PROJECT_SOURCE_DIR}/models/kawada-hi
 install(DIRECTORY launch DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 install(DIRECTORY scripts DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION} USE_SOURCE_PERMISSIONS)
 install(DIRECTORY models DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION} PATTERN "*.in" EXCLUDE)
-install(DIRECTORY test DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+install(DIRECTORY test DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION} USE_SOURCE_PERMISSIONS)
 
 install(CODE "
   file(GLOB _xml_files \"$ENV{DESTDIR}/${CMAKE_INSTALL_PREFIX}/share/hironx_ros_bridge/models/*.xml\")
