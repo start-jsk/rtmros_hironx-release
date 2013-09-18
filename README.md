@@ -1,3 +1,25 @@
+## rtmros_hironx - 1.0.0-5
+
+User `k-okada@kokada-t430s` released the packages in the `rtmros_hironx` repository by running `/usr/bin/bloom-release --rosdistro groovy --track groovy rtmros_hironx` on `Wed, 18 Sep 2013 08:12:06 -0000`
+
+These packages were released:
+- `hironx_moveit_config`
+- `hironx_ros_bridge`
+- `rtmros_hironx`
+
+Version of package(s) in repository `rtmros_hironx`:
+- rosdistro version: `1.0.0-4`
+- old version: `1.0.0-4`
+- new version: `1.0.0-5`
+
+Versions of tools used:
+- bloom version: `0.4.4`
+- catkin_pkg version: `0.1.19`
+- rosdep version: `0.10.21`
+- rosdistro version: `0.2.13`
+- vcstools version: `0.1.31`
+
+
 ## rtmros_hironx - 1.0.0-4
 
 User `k-okada@kokada-t430s` released the packages in the `rtmros_hironx` repository by running `/usr/bin/bloom-release --rosdistro groovy --track groovy rtmros_hironx` on `Sun, 08 Sep 2013 02:27:54 -0000`
