@@ -259,7 +259,8 @@ class HIRONX(HrpsysConfigurator):
         for item in self.Groups:
             self.seq_svc.addJointGroup(item[0], item[1])
         for k, v in self.HandGroups.iteritems():
-            self.sc_svc.addJointGroup(k, v)
+            if self.sc_svc:
+                self.sc_svc.addJointGroup(k, v)
 
     def getActualState(self):
         '''
@@ -412,7 +413,8 @@ class HIRONX(HrpsysConfigurator):
 
         # turn on hand motors
         print 'Turn on Hand Servo'
-        self.sc_svc.servoOn()
+        if self.sc_svc:
+            self.sc_svc.servoOn()
 
         return 1
 
@@ -431,7 +433,8 @@ class HIRONX(HrpsysConfigurator):
             return 0
 
         print 'Turn off Hand Servo'
-        self.sc_svc.servoOff()
+        if self.sc_svc:
+            self.sc_svc.servoOff()
         # if the servos aren't on switch power off
         if not self.isServoOn(jname):
             if jname.lower() == 'all':
@@ -457,7 +460,8 @@ class HIRONX(HrpsysConfigurator):
 
             # turn off hand motors
             print 'Turn off Hand Servo'
-            self.sc_svc.servoOff()
+            if self.sc_svc:
+                self.sc_svc.servoOff()
 
             return 2
         except:
@@ -515,7 +519,8 @@ class HIRONX(HrpsysConfigurator):
 
         # turn on hand motors
         print 'Turn on Hand Servo'
-        self.sc_svc.servoOn()
+        if self.sc_svc:
+            self.sc_svc.servoOn()
 
     '''
     **** All methods below here is overridden from super class
@@ -544,6 +549,14 @@ class HIRONX(HrpsysConfigurator):
               method's code doesn't give enough hint to do so.
         '''
         HrpsysConfigurator.goActual(self)
+
+    def readDigitalInput(self):
+        '''
+        @see: HrpsysConfigurator.readDigitalInput
+
+        TODO: document
+        '''
+        HrpsysConfigurator.readDigitalInput(self)
 
     def setJointAngle(self, jname, angle, tm):
         '''
@@ -590,6 +603,18 @@ class HIRONX(HrpsysConfigurator):
                                                         dx, dy, dz, dr, dp, dw,
                                                         tm, wait)
 
+    def waitInterpolationOfGroup(self, groupname):
+        '''
+        Lets SequencePlayer wait until the movement currently happening to
+        finish.
+        @see: SequencePlayer.waitInterpolationOfGroup
+        @see: http://wiki.ros.org/joint_trajectory_action. This method
+              corresponds to JointTrajectoryGoal in ROS.
+
+        @type groupname: str
+        '''
+        self.seq_svc.waitInterpolationOfGroup(groupname)
+
     def writeDigitalOutput(self, dout):
         '''
         @see: HrpsysConfigurator.writeDigitalOutput
@@ -613,11 +638,3 @@ class HIRONX(HrpsysConfigurator):
         @return: What RobotHardware.writeDigitalOutput returns (TODO: document)
         '''
         HrpsysConfigurator.writeDigitalOutputWithMask(self, dout, mask)
-
-    def readDigitalInput(self):
-        '''
-        @see: HrpsysConfigurator.readDigitalInput
-
-        TODO: document
-        '''
-        HrpsysConfigurator.readDigitalInput(self)
