@@ -9,7 +9,9 @@ except:
 
 from hironx_ros_bridge import hironx_client
 
+import rtm
 import argparse
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='hiro command line interpreters')
     parser.add_argument('--host', help='corba name server hostname')
