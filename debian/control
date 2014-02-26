@@ -1,0 +1,12 @@
+Source: ros-hydro-hironx-ros-bridge
+Section: misc
+Priority: extra
+Maintainer: Kei Okada <k-okada@jsk.t.u-tokyo.ac.jp>
+Build-Depends: debhelper (>= 7.0.50~), ros-hydro-catkin, ros-hydro-hrpsys-ros-bridge, unzip
+Homepage: http://ros.org/wiki/hironx_ros_bridge
+Standards-Version: 3.9.2
+
+Package: ros-hydro-hironx-ros-bridge
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-hydro-hrpsys-ros-bridge
+Description: ROS-OpenRTM interfacing package for Kawada's Hiro dual-arm robot.
