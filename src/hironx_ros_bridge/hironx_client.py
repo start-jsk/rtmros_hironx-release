@@ -50,15 +50,29 @@ from waitInput import waitInputConfirm, waitInputSelect
 
 SWITCH_ON = OpenHRP.RobotHardwareService.SWITCH_ON
 SWITCH_OFF = OpenHRP.RobotHardwareService.SWITCH_OFF
-_MSG_ASK_ISSUEREPORT = 'Your report to http://code.google.com/p/rtm-ros-robotics/issues about the situation you see this issue is appreciated.'
+_MSG_ASK_ISSUEREPORT = 'Your report to ' + \
+                       'https://github.com/start-jsk/rtmros_hironx/issues ' + \
+                       'about the issue you are seeing is appreciated.'
 
 
 class HIRONX(HrpsysConfigurator):
     '''
+    @see: <a href = "http://code.google.com/p/hrpsys-base/source/browse/trunk/python/hrpsys_config.py">HrpsysConfigurator</a>
+
     This class holds methods that are specific to Kawada Industries' dual-arm
     robot called Hiro.
     '''
 
+    Groups = [['torso', ['CHEST_JOINT0']],
+              ['head', ['HEAD_JOINT0', 'HEAD_JOINT1']],
+              ['rarm', ['RARM_JOINT0', 'RARM_JOINT1', 'RARM_JOINT2',
+                        'RARM_JOINT3', 'RARM_JOINT4', 'RARM_JOINT5']],
+              ['larm', ['LARM_JOINT0', 'LARM_JOINT1', 'LARM_JOINT2',
+                        'LARM_JOINT3', 'LARM_JOINT4', 'LARM_JOINT5']]]
+
+    '''
+    For OffPose and InitialPose, the angles of each joint are listed in the
+    ordered as defined in Groups variable.'''
     OffPose = [[0], [0, 0],
                    [25, -139, -157, 45, 0, 0],
                    [-25, -139, -157, -45, 0, 0],
@@ -70,12 +84,6 @@ class HIRONX(HrpsysConfigurator):
                    [0, 0, 0, 0],
                    [0, 0, 0, 0]]
 
-    Groups = [['torso', ['CHEST_JOINT0']],
-              ['head', ['HEAD_JOINT0', 'HEAD_JOINT1']],
-              ['rarm', ['RARM_JOINT0', 'RARM_JOINT1', 'RARM_JOINT2',
-                        'RARM_JOINT3', 'RARM_JOINT4', 'RARM_JOINT5']],
-              ['larm', ['LARM_JOINT0', 'LARM_JOINT1', 'LARM_JOINT2',
-                        'LARM_JOINT3', 'LARM_JOINT4', 'LARM_JOINT5']]]
     HandGroups = {'rhand': [2, 3, 4, 5], 'lhand': [6, 7, 8, 9]}
 
     RtcList = []
@@ -99,10 +107,11 @@ class HIRONX(HrpsysConfigurator):
 
     def goOffPose(self, tm=7):
         '''
-        Set predefined (as member variable) off pose per each body groups.
+        Move arms to the predefined (as member variable) pose where robot can
+        be safely turned off.
 
-        @type tm: int
-        @param tm: time
+        @type tm: float
+        @param tm: Second to complete.
         '''
         for i in range(len(self.Groups)):
             self.setJointAnglesOfGroup(self.Groups[i][0], self.OffPose[i], tm,
@@ -113,11 +122,10 @@ class HIRONX(HrpsysConfigurator):
 
     def goInitial(self, tm=7, wait=True):
         '''
-        Set predefined initial pose per each body groups. Predefined moves are
-        defined as member variable of this class.
+        Move arms to the predefined (as member variable) "initialized" pose.
 
-        @type tm: int
-        @param tm: Time that takes for the whole process.
+        @type tm: float
+        @param tm: Second to complete.
         @type wait: bool
         @param wait: If true, SequencePlayer.waitInterpolationOfGroup gets run.
                      (TODO: Elaborate what this means...Even after having taken
@@ -139,8 +147,8 @@ class HIRONX(HrpsysConfigurator):
 
     def getRTCList(self):
         '''
-        Overwriting HrpsysConfigurator.getRTCList
-        Returning predefined list of RT components.
+        @see: HrpsysConfigurator.getRTCList
+
         @rtype [[str]]
         @rerutrn List of available components. Each element consists of a list
                  of abbreviated and full names of the component.
@@ -155,7 +163,6 @@ class HIRONX(HrpsysConfigurator):
             ['log', "DataLogger"]
             ]
 
-    #
     # hand interface
     # effort: 1~100[%]
     # hiro.HandOpen("rhand", effort)
@@ -227,7 +234,7 @@ class HIRONX(HrpsysConfigurator):
                   (TODO: need verified. Also what's the length of the list?)
         @param tm: Time in second to complete the work.
         '''
-        for i in [2, 3, 6, 7]:  # do not change this line if servo is difference, change HandGroups
+        for i in [2, 3, 6, 7]:  # do not change this line if servo is different, change HandGroups
             av[i] = -av[i]
         self.setHandJointAngles(hand, av, tm)
 
@@ -253,9 +260,14 @@ class HIRONX(HrpsysConfigurator):
 
     def setSelfGroups(self):
         '''
-        Set elements of body groups and joing groups that are statically
-        defined as member variables within this class.
+        Set to the hrpsys.SequencePlayer the groups of links and joints that
+        are statically defined as member variables (Groups) within this class.
+
+        That said, override Groups variable if you prefer link and joint
+        groups set differently.
         '''
+        #TODO: Accept groups variable. The name of the method sounds more
+        #      natural if it accepts it.
         for item in self.Groups:
             self.seq_svc.addJointGroup(item[0], item[1])
         for k, v in self.HandGroups.iteritems():
@@ -264,8 +276,20 @@ class HIRONX(HrpsysConfigurator):
 
     def getActualState(self):
         '''
-        TODO: needs documented. What state does this return?
+        Returns the physical state of robot.
+
+        @rtype: <a href = "http://hrpsys-base.googlecode.com/svn/doc/df/d17/structOpenHRP_1_1RobotHardwareService_1_1RobotState.html">OpenHRP::RobotHardwareService::RobotState</a>
+        @return: Robot's hardware status object that contains the following
+                 variables accessible: angle, command, torque, servoState,
+                 force, rateGyro, accel, voltage, current. See the api doc
+                 of the class for more detail. Each variable is accessible by
+                 like this for example:
+
+                     servostate= robot.getActualState().servoState
         '''
+        #TODO: Handle AttributeError. Typically when RobotHardware is not found,
+        #      AttributeError: 'NoneType' object has no attribute 'getStatus'
+
         return self.rh_svc.getStatus()
 
     def isCalibDone(self):
@@ -308,19 +332,28 @@ class HIRONX(HrpsysConfigurator):
             return True
         return False
 
-    def liftRobotUp(self):
-        '''
-        TODO: needs documented. Returning always true?
-        '''
-        return True
-
-    def stOff(self):
-        '''
-        TODO: needs documented. Returning always false?
-        '''
-        return False
-
     def flat2Groups(self, flatList):
+        '''
+        @type flatList: [int]
+        @param flatList: single dimension list, with its length depends on
+                         'Groups' variable defined within this class. Excessive
+                         elements will be dropped (see example below in @return)
+
+                         eg. If the number of joints of the robot is 15,
+                             len(flatList) should be 15.
+        @rtype: [[]]
+        @return: 2-dimensional list that has the same format with
+                 'Groups' variable.
+
+                 eg.
+                 ipython> flatlist = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90,
+                                      100, 110, 120, 130, 140, 150]
+                 ipython> robot.flat2Groups(flatlist)
+                 [[0], [10, 20],
+                  [30, 40, 50, 60, 70, 80],
+                  [90, 100, 110, 120, 130, 140]]
+
+        '''
         retList = []
         index = 0
         for group in self.Groups:
@@ -331,13 +364,14 @@ class HIRONX(HrpsysConfigurator):
 
     def servoOn(self, jname='all', destroy=1, tm=3):
         '''
-        Turn on/off servos. Calibration of joints need to be done already.
+        Turn on servo motors at joint specified.
+        Joints need to be calibrated (otherwise error returns).
 
         @type jname: str
         @param jname: The value 'all' works iteratively for all servos.
         @param destroy: Not used.
-        @type tm: int
-        @param tm: Time to complete.
+        @type tm: float
+        @param tm: Second to complete.
         @rtype: int
         @return: 1 or -1 indicating success or failure, respectively.
         '''
@@ -354,7 +388,6 @@ class HIRONX(HrpsysConfigurator):
         if jname == '':
             jname = 'all'
 
-        #self.liftRobotUp()  #lift robot up does not need for non-legged robot
         #self.rh_svc.power('all', SWITCH_ON)  #do not switch on before goActual
 
         try:
@@ -387,8 +420,7 @@ class HIRONX(HrpsysConfigurator):
                   _MSG_ASK_ISSUEREPORT)
 
         try:
-            self.stOff()
-            self.goActual()
+            self.goActual()  # This needs to happen before turning servo on.
             time.sleep(0.1)
             self.rh_svc.servo(jname, SWITCH_ON)
             time.sleep(2)
@@ -445,8 +477,6 @@ class HIRONX(HrpsysConfigurator):
         if jname == '':
             jname = 'all'
 
-        self.liftRobotUp()
-
         if wait:
             waitInputConfirm(
                 '!! Robot Motion Warning (Servo OFF)!!\n\n'
@@ -471,7 +501,7 @@ class HIRONX(HrpsysConfigurator):
     def checkEncoders(self, jname='all', option=''):
         '''
         Run the encoder checking sequence for specified joints,
-        run goActual and turn on servos.
+        run goActual to adjust the direction values, and then turn servos on.
 
         @type jname: str
         @param jname: The value 'all' works iteratively for all servos.
@@ -513,7 +543,7 @@ class HIRONX(HrpsysConfigurator):
         self.rh_svc.initializeJointAngle(jname, option)
         print self.configurator_name, 'done'
         self.rh_svc.power('all', SWITCH_OFF)
-        self.goActual()
+        self.goActual()  # This needs to happen before turning servo on.
         time.sleep(0.1)
         self.rh_svc.servo(jname, SWITCH_ON)
 
@@ -532,71 +562,313 @@ class HIRONX(HrpsysConfigurator):
     **** TODO: These methods must be moved to somewhere abstract,
     ****       since they are NOT specific to HIRONX.
     '''
-    def getCurrentPosition(self, lname):
+    def getCurrentPose(self, jointname):
+        '''
+        @see: HrpsysConfigurator.getCurrentPose
+
+        Returns the current physical pose of the specified joint.
+        cf. getReferencePose that returns commanded value.
+
+        eg.
+             IN: robot.getCurrentPose('LARM_JOINT5')
+             OUT: [-0.0017702356144599085,
+              0.00019034630541264752,
+              -0.9999984150158207,
+              0.32556275164378523,
+              0.00012155879975329215,
+              0.9999999745367515,
+               0.0001901314142046251,
+               0.18236394191140365,
+               0.9999984257434246,
+               -0.00012122202968358842,
+               -0.001770258707652326,
+               0.07462472659364472,
+               0.0,
+               0.0,
+               0.0,
+               1.0]
+
+        @type jointname: str
+        @rtype: List of float
+        @return: Rotational matrix and the position of the given joint in
+                 1-dimensional list, that is:
+
+                 [a11, a12, a13, x,
+                  a21, a22, a23, y,
+                  a31, a32, a33, z,
+                   0,   0,   0,  1]
+        '''
+        return HrpsysConfigurator.getCurrentPose(self, jointname)
+
+    def getCurrentPosition(self, jointname):
         '''
         @see: HrpsysConfigurator.getCurrentPosition
 
-        @type lname: str
-        @param lname: link name.
+        Returns the current physical position of the specified joint.
+        cf. getReferencePosition that returns commanded value.
+
+        eg.
+            robot.getCurrentPosition('LARM_JOINT5')
+            [0.325, 0.182, 0.074]
+
+        @type jointname: str
+        @rtype: List of float
+        @return: List of x, y, z positions about the specified joint.
         '''
-        return HrpsysConfigurator.getCurrentPosition(self, lname)
+        return HrpsysConfigurator.getCurrentPosition(self, jointname)
+
+    def getCurrentRotation(self, jointname):
+        '''
+        @see: HrpsysConfigurator.getCurrentRotation
+
+        Returns the current physical rotation of the specified joint.
+        cf. getReferenceRotation that returns commanded value.
+
+        @type jointname: str
+        @rtype: List of float
+        @return: Rotational matrix of the given joint in 2-dimensional list,
+                 that is:
+                 [[a11, a12, a13],
+                  [a21, a22, a23],
+                  [a31, a32, a33]]
+        '''
+        return HrpsysConfigurator.getCurrentRotation(self, jointname)
+
+    def getCurrentRPY(self, jointname):
+        '''
+        @see: HrpsysConfigurator.getCurrentRPY
+
+        Returns the current physical rotation in RPY of the specified joint.
+        cf. getReferenceRPY that returns commanded value.
+
+        @type jointname: str
+        @rtype: List of float
+        @return: List of orientation in rpy form about the specified joint.
+        '''
+        return HrpsysConfigurator.getCurrentRPY(self, jointname)
+
+    def getJointAngles(self):
+        '''
+        @see: HrpsysConfigurator.getJointAngles
+
+        Returns the commanded joint angle values.
+
+        Note that it's not the physical state of the robot's joints, which
+        can be obtained by getActualState().angle.
+
+        @rtype: List of float
+        @return: List of angles (degree) of all joints, in the order defined
+                 in the member variable 'Groups' (eg. chest, head1, head2, ..).
+        '''
+        return HrpsysConfigurator.getJointAngles(self)
+
+    def getReferencePose(self, jointname):
+        '''
+        @see: HrpsysConfigurator.getReferencePose
+
+        Returns the current commanded pose of the specified joint.
+        cf. getCurrentPose that returns physical pose.
+
+        @rtype: List of float
+        @return: Rotational matrix and the position of the given joint in
+                 1-dimensional list, that is:
+
+                 [a11, a12, a13, x,
+                  a21, a22, a23, y,
+                  a31, a32, a33, z,
+                   0,   0,   0,  1]
+        '''
+        return HrpsysConfigurator.getReferencePose(self, jointname)
+
+    def getReferencePosition(self, jointname):
+        '''
+        @see: HrpsysConfigurator.getReferencePosition
+
+        Returns the current commanded position of the specified joint.
+        cf. getCurrentPosition that returns physical value.
+
+        @type jointname: str
+        @rtype: List of float
+        @return: List of x, y, z positions about the specified joint.
+        '''
+        return HrpsysConfigurator.getReferencePosition(self, jointname)
+
+    def getReferenceRotation(self, jointname):
+        '''
+        @see: HrpsysConfigurator.getReferenceRotation
+
+        Returns the current commanded rotation of the specified joint.
+        cf. getCurrentRotation that returns physical value.
+
+        @type jointname: str
+        @rtype: List of float
+        @return: Rotational matrix of the given joint in 2-dimensional list,
+                 that is:
+                 [[a11, a12, a13],
+                  [a21, a22, a23],
+                  [a31, a32, a33]]
+        '''
+        return HrpsysConfigurator.getReferenceRotation(self, jointname)
+
+    def getReferenceRPY(self, jointname):
+        '''
+        @see: HrpsysConfigurator.getReferenceRPY
+
+        Returns the current commanded rotation in RPY of the specified joint.
+        cf. getCurrentRPY that returns physical value.
+
+        @type jointname: str
+        @rtype: List of float
+        @return: List of orientation in rpy form about the specified joint.
+        '''
+        return HrpsysConfigurator.getReferenceRPY(self, jointname)
 
     def goActual(self):
         '''
         @see: HrpsysConfigurator.goActual (that calls StateHolder::goActual)
 
-        TODO: behavior needs documented; looking at the original
-              method's code doesn't give enough hint to do so.
+        Adjust directional values to the angles in the physical state. This
+        needs to be run BEFORE servos are turned on.
         '''
         HrpsysConfigurator.goActual(self)
+
+    def loadPattern(self, fname, tm):
+        '''
+        @see: HrpsysConfigurator.loadPattern
+
+        Load a pattern file that is created offline.
+
+        Format of the pattern file:
+        - example format:
+
+          t0 j0 j1 j2...jn
+          t1 j0 j1 j2...jn
+          :
+          tn j0 j1 j2...jn
+
+        - Delimmitted by space
+        - Each line consists of an action.
+        - Time between each action is defined by tn+1 - tn
+          - The time taken for the 1st line is defined by the arg tm.
+
+        @param fname: Name of the pattern file.
+        @type tm: double
+        @param tm: - The time to take for the 1st line.
+        @return: List of 2 oct(string) values.
+        '''
+        HrpsysConfigurator.loadPattern(self, fname, tm)
 
     def readDigitalInput(self):
         '''
         @see: HrpsysConfigurator.readDigitalInput
 
-        TODO: document
+        Digital input consits of 14 bits. The last 2 bits are lacking
+        and compensated, so that the last 4 bits are 0x4 instead of 0x1.
+
+        @rtype: [str]
+        @return: List of 2 oct(string) values.
         '''
         HrpsysConfigurator.readDigitalInput(self)
+        #TODO: Catch AttributeError that occurs when RobotHardware not found.
+        #      Typically with simulator, erro msg might look like this;
+        #      'NoneType' object has no attribute 'readDigitalInput'
 
     def setJointAngle(self, jname, angle, tm):
         '''
         @see: HrpsysConfigurator.setJointAngle
 
+        Set angle to the given joint.
+
+        NOTE-1: It's known that this method does not do anything after
+                some group operation is done.
+                TODO: at least need elaborated to warn users.
+
+        NOTE-2: that while this method does not check angle value range,
+                any joints could emit position limit over error, which has not
+                yet been thrown by hrpsys so that there's no way to catch on
+                this client side. Worthwhile opening an enhancement ticket
+                for that at hironx' designated issue tracker.
+
         @type jname: str
-        @param jname: Name of joint.
-        @type angle: double
-        @type tm: double
+        @type angle: float
+        @param angle: In degree.
+        @type tm: float
         @param tm: Time to complete.
         '''
         return HrpsysConfigurator.setJointAngle(self, jname, angle, tm)
+
+    def setJointAngles(self, angles, tm):
+        '''
+        @see: HrpsysConfigurator.setJointAngles
+
+        NOTE-1: that while this method does not check angle value range, any
+                joints could emit position limit over error, which has not yet
+                been thrown by hrpsys so that there's no way to catch on this
+                client side. Worthwhile opening an enhancement ticket for that
+                at hironx' designated issue tracker.
+
+        @type angles: float
+        @param angles: In degree.
+        @type tm: float
+        @param tm: Time to complete.
+        '''
+        return HrpsysConfigurator.setJointAngles(self, angles, tm)
 
     def setJointAnglesOfGroup(self, gname, pose, tm, wait=True):
         '''
         @see: HrpsysConfigurator.setJointAnglesOfGroup
 
+        Set the joint angles to aim. By default it waits interpolation to be
+        over.
+
+        Note that while this method does not check angle value range,
+        any joints could emit position limit over error, which has not yet
+        been handled in hrpsys so that there's no way to catch on this client
+        class level. Please consider opening an enhancement ticket for that
+        at hironx' designated issue tracker.
+
         @type gname: str
         @param gname: Name of joint group.
-        @type pose: [double]
+        @type pose: [float]
         @param pose: list of positions and orientations
-        @type tm: double
+        @type tm: float
         @param tm: Time to complete.
         @type wait: bool
         @param wait: If true, SequencePlayer.waitInterpolationOfGroup gets run.
-                  (TODO: Elaborate what this means...Even after having taken
-                  a look at its source code I can't tell exactly what it means)
         '''
         return HrpsysConfigurator.setJointAnglesOfGroup(self, gname, pose, tm,
                                                         wait)
+
+    def setTargetPose(self, gname, pos, rpy, tm):
+        '''
+        @see: HrpsysConfigurator.setTargetPose
+
+        Set absolute pose to a joint.
+        All d* arguments are in meter.
+
+        @param gname: Name of the joint group.
+        @type pos: float
+        @type rpy: TODO: ??
+        @rtype: bool
+        '''
+        return HrpsysConfigurator.setTargetPose(self, gname, pos, rpy, tm)
 
     def setTargetPoseRelative(self, gname, eename, dx=0, dy=0, dz=0,
                               dr=0, dp=0, dw=0, tm=10, wait=True):
         '''
         @see: HrpsysConfigurator.setTargetPoseRelative
+
         Set angles to a joint group relative to its current pose.
         All d* arguments are in meter.
 
+        Example usage: The following moves RARM_JOINT5 joint 0.1mm forward
+                       within 0.1sec.
+
+            robot.setTargetPoseRelative('rarm', 'RARM_JOINT5', dx=0.0001,
+                                        tm=0.1)
+
         @param gname: Name of the joint group.
-        @param eename: Name of the link.
+        @param eename: Name of the joint.
         @rtype: bool
         '''
         return HrpsysConfigurator.setTargetPoseRelative(self, gname, eename,
@@ -607,6 +879,7 @@ class HIRONX(HrpsysConfigurator):
         '''
         Lets SequencePlayer wait until the movement currently happening to
         finish.
+
         @see: SequencePlayer.waitInterpolationOfGroup
         @see: http://wiki.ros.org/joint_trajectory_action. This method
               corresponds to JointTrajectoryGoal in ROS.
@@ -619,9 +892,16 @@ class HIRONX(HrpsysConfigurator):
         '''
         @see: HrpsysConfigurator.writeDigitalOutput
 
+        Using writeDigitalOutputWithMask is recommended for the less data
+        transport.
+
         @type dout: [int]
-        @param dout: List of bits. Length might defer depending on
-                     robot's implementation.
+        @param dout: List of bits, length of 32 bits where elements are
+                     0 or 1.
+
+                     What each element stands for depends on how
+                     the robot's imlemented. Consult the hardware manual.
+
         @return: What RobotHardware.writeDigitalOutput returns (TODO: document)
         '''
         HrpsysConfigurator.writeDigitalOutput(self, dout)
@@ -630,11 +910,35 @@ class HIRONX(HrpsysConfigurator):
         '''
         @see: HrpsysConfigurator.writeDigitalOutputWithMask
 
+        Both dout and mask are lists with length of 32. Only the bit in dout
+        that corresponds to the bits in mask that are flagged as 1 will be
+        evaluated.
+
+        Example:
+         Case-1. Only 18th bit will be evaluated as 1.
+          dout [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+          mask [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+         Case-2. Only 18th bit will be evaluated as 0.
+          dout [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+          mask [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+         Case-3. None will be evaluated since there's no flagged bit in mask.
+          dout [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+          mask [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
         @type dout: [int]
-        @param dout: List of bits. Length might defer depending on robot's
-                     implementation.
+        @param dout: List of bits, length of 32 bits where elements are
+                     0 or 1.
         @type mask: [int]
-        @param mask: List of masking bits. Length depends on that of dout.
+        @param mask: List of masking bits, length of 32 bits where elements are
+                     0 or 1.
         @return: What RobotHardware.writeDigitalOutput returns (TODO: document)
         '''
         HrpsysConfigurator.writeDigitalOutputWithMask(self, dout, mask)
