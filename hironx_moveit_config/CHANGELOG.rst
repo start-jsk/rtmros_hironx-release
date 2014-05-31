@@ -2,6 +2,9 @@
 Changelog for package hironx_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.14 (2014-03-07)
+-------------------
+
 1.0.13 (2014-03-06)
 -------------------
 * Applying an important change suggest by moveit developers (same as https://github.com/tork-a/rtmros_nextage/issues/46).
