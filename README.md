@@ -1,3 +1,25 @@
+## rtmros_hironx (groovy) - 1.0.14-0
+
+The packages in the `rtmros_hironx` repository were released into the `groovy` distro by running `/usr/bin/bloom-release rtmros_hironx --track groovy --rosdistro groovy` on `Sat, 31 May 2014 00:02:07 -0000`
+
+These packages were released:
+- `hironx_moveit_config`
+- `hironx_ros_bridge`
+- `rtmros_hironx`
+
+Version of package(s) in repository `rtmros_hironx`:
+- rosdistro version: `1.0.13-0`
+- old version: `1.0.13-0`
+- new version: `1.0.14-0`
+
+Versions of tools used:
+- bloom version: `0.5.9`
+- catkin_pkg version: `0.2.2`
+- rosdep version: `0.10.27`
+- rosdistro version: `0.3.5`
+- vcstools version: `0.1.35`
+
+
 ## rtmros_hironx (hydro) - 1.0.14-0
 
 User `n130s@yayoi` released the packages in the `rtmros_hironx` repository into the `hydro` distro by running `/usr/bin/bloom-release rtmros_hironx --track hydro --rosdistro hydro` on `Fri, 07 Mar 2014 10:53:08 -0000`
