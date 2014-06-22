@@ -28,44 +28,45 @@ class TestHiroIK(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        modelfile = '/opt/jsk/etc/HIRONX/model/main.wrl'
-        rtm.nshost = 'hiro014'
-        robotname = "RobotHardware0"
+        #modelfile = rospy.get_param("hironx/collada_model_filepath")
+        #rtm.nshost = 'hiro014'
+        #robotname = "RobotHardware0"
 
         self.robot = hironx.HIRONX()
-        self.robot.init(robotname=robotname, url=modelfile)
+        #self.robot.init(robotname=robotname, url=modelfile)
+        self.robot.init()
 
     def angle_vector_generator(self):
-        step = 80
-        for i0 in range(-80,80,step):
-            for i1 in range(-130,50,step):
-                for i2 in range(-150,10,step):
-                    for i3 in range(-160,100,step):
-                        for i4 in range(-80,80,step):
-                            for i5 in range(-160,160,step):
+        for i0 in range(-80,80,80):
+            for i1 in range(-130,50,90):
+                for i2 in range(-150,10,80):
+                    for i3 in range(-160,100,130):
+                        for i4 in range(-80,80,80):
+                            for i5 in range(-160,160,160):
                                 yield [i0, i1, i2, i3, i4, i5]
 
-    def test_ik_joint_angle(self):
-        lav = self.angle_vector_generator().next()
-        for av in self.angle_vector_generator():
-            print "av", av
-            self.robot.setJointAnglesOfGroup("LARM", av, 2)
-            self.robot.waitInterpolationOfGroup("LARM")
-            pos1 = self.robot.getReferencePosition("LARM_JOINT5")
-            rpy1 = self.robot.getReferenceRPY("LARM_JOINT5")
-            if numpy.linalg.norm(numpy.array(lav) - numpy.array(av)) > 10:
-                lav = av
-            self.robot.setJointAnglesOfGroup("LARM", lav, 2)
-            self.robot.waitInterpolationOfGroup("LARM")
-            self.assertTrue(self.robot.setTargetPose("LARM", pos1, rpy1, 5))
-            self.robot.waitInterpolationOfGroup("LARM")
-            pos2 = self.robot.getReferencePosition("LARM_JOINT5")
-            rpy2 = self.robot.getReferenceRPY("LARM_JOINT5")
-            print "pos", pos1, pos2, numpy.linalg.norm(numpy.array(pos1)-numpy.array(pos2))
-            print "rpy", rpy1, rpy2, numpy.linalg.norm(numpy.array(rpy1)-numpy.array(rpy2))
-            self.assertTrue(numpy.linalg.norm(numpy.array(pos1)-numpy.array(pos2))<1.0e-4) # 0.1 mm
-            self.assertTrue(numpy.linalg.norm(numpy.array(rpy1)-numpy.array(rpy2))<1.0e-3) # 0.001 rad = 0.057296 deg
-            lav = av
+# 3/9/2014 Isaac comments out the entire test_ik_joint_angle that can cause left arm to hit its shoulder.
+#    def test_ik_joint_angle(self):
+#        lav = self.angle_vector_generator().next()
+#        for av in self.angle_vector_generator():
+#            print "av", av
+#            self.robot.setJointAnglesOfGroup("LARM", av, 2)
+#            self.robot.waitInterpolationOfGroup("LARM")
+#            pos1 = self.robot.getReferencePosition("LARM_JOINT5")
+#            rpy1 = self.robot.getReferenceRPY("LARM_JOINT5")
+#            if numpy.linalg.norm(numpy.array(lav) - numpy.array(av)) > 10:
+#                lav = av
+#            self.robot.setJointAnglesOfGroup("LARM", lav, 2)
+#            self.robot.waitInterpolationOfGroup("LARM")
+#            self.assertTrue(self.robot.setTargetPose("LARM", pos1, rpy1, 5))
+#            self.robot.waitInterpolationOfGroup("LARM")
+#            pos2 = self.robot.getReferencePosition("LARM_JOINT5")
+#            rpy2 = self.robot.getReferenceRPY("LARM_JOINT5")
+#            print "pos", pos1, pos2, numpy.linalg.norm(numpy.array(pos1)-numpy.array(pos2))
+#            print "rpy", rpy1, rpy2, numpy.linalg.norm(numpy.array(rpy1)-numpy.array(rpy2))
+#            self.assertTrue(numpy.linalg.norm(numpy.array(pos1)-numpy.array(pos2))<1.0e-4) # 0.1 mm
+#            self.assertTrue(numpy.linalg.norm(numpy.array(rpy1)-numpy.array(rpy2))<1.0e-3) # 0.001 rad = 0.057296 deg
+#            lav = av
 
     def target_point_generator(self,xmin,xmax,ymin,ymax,zmin,zmax,step):
         for x in range(xmin,xmax,step):
@@ -83,9 +84,9 @@ class TestHiroIK(unittest.TestCase):
         arm_target = arm+"_JOINT5"
         rot1 = [[0,0,-1],[0,1,0],[1,0,0]]
         for pos1 in self.target_point_generator(xmin,xmax,ymin,ymax,zmin,zmax,step):
-            self.robot.goInitial()
+            self.robot.goInitial(tm=2)
             print self.robot.getReferenceRPY(arm_target)
-            self.assertTrue(self.robot.setTargetPose(arm, pos1, euler_from_matrix(rot1), 5))
+            self.assertTrue(self.robot.setTargetPose(arm, pos1, euler_from_matrix(rot1), 1))
             self.robot.waitInterpolationOfGroup(arm)
             pos2 = self.robot.getReferencePosition(arm_target)
             rot2 = self.robot.getReferenceRotation(arm_target)
@@ -94,7 +95,7 @@ class TestHiroIK(unittest.TestCase):
             self.assertTrue(numpy.linalg.norm(numpy.array(pos1)-numpy.array(pos2))<1.0e-4) # 0.1 mm
             self.assertTrue(numpy.linalg.norm(numpy.array(rot1)-numpy.array(rot2))<1.0e-3) # 0.001 rad = 0.057296 deg
 
-    def _test_set_target_pose(self):
+    def test_set_target_pose(self):
         self.robot.setJointAnglesOfGroup("TORSO",[45],3)
         self.robot.waitInterpolationOfGroup("TORSO")
         ret = self.robot.setTargetPose("larm", [0.3255627368715471, 0.1823638733778268, 0.07462449717662004+0.2], [-3.0732189053889805, -1.5690225912054285, 3.0730289207320203], 5, "CHEST_JOINT0")
