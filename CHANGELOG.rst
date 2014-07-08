@@ -2,6 +2,15 @@
 Changelog for package hironx_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.16 (2014-07-08)
+-------------------
+
+1.0.15 (2014-06-22)
+-------------------
+* Enable "natto"-view on RViz.
+* Disable query for start state in Moveit RViz plugin.
+* Contributors: Isaac IY Saito, Kei Okada
+
 1.0.14 (2014-03-07)
 -------------------
 
