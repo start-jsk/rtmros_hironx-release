@@ -3,13 +3,14 @@
 export JSK_DIR=/opt/jsk
 export LOG_DIR=@LOG_PATH@
 export PATH=$JSK_DIR/bin:$PATH
-export LD_LIBRARY_PATH=/opt/hiro/lib:@MODULE_LOAD_PATH@:$LD_LIBRARY_PATH ## use libhrpIo.so in /opt/hiro/lib
+export LD_LIBRARY_PATH=/opt/nextage-open/lib:@MODULE_LOAD_PATH@:$LD_LIBRARY_PATH ## use libhrpIo.so in /opt/nextage-open/lib
 export RTCD_KILLNAME=rtcd
 
 OS=`uname`
 if [ "$OS" = "Linux" ]; then
   KILLALL="/usr/bin/killall -q"
 elif [ "$OS" = "QNX" ]; then
+  # On QNX many libraries requreid for hiro-nxo are installed via pkgsrc, which goes into /usr/pkg.
   export LD_LIBRARY_PATH=/usr/pkg/lib:$LD_LIBRARY_PATH
   KILLALL=/bin/slay
 fi
@@ -21,8 +22,7 @@ mkdir -p $LOG_DIR
 $KILLALL -9 $RTCD_KILLNAME
 
 while :; do
-    ./unlock_iob
-
+    /opt/nextage-open/bin/unlock_iob
 
     if [ -f $LOG_DIR/rtcd.log ]; then
         rm $LOG_DIR/rtcd.log
