@@ -29,12 +29,13 @@ class TestHiro(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        modelfile = '/opt/jsk/etc/HIRONX/model/main.wrl'
-        rtm.nshost = 'hiro024'
-        robotname = "RobotHardware0"
+        #modelfile = rospy.get_param("hironx/collada_model_filepath")
+        #rtm.nshost = 'hiro024'
+        #robotname = "RobotHardware0"
 
         cls.robot = hironx.HIRONX()
-        cls.robot.init(robotname=robotname, url=modelfile)
+        #cls.robot.init(robotname=robotname, url=modelfile)
+        cls.robot.init()
 
     @classmethod
     def tearDownClass(cls):
@@ -114,11 +115,11 @@ class TestHiro(unittest.TestCase):
         self.filenames.append(name)
         return data
 
-    def check_log_data(self, data, idx, tm_data, min_data, max_data, acc_thre=0.06): # expected, time, min, max of index
+    def check_log_data(self, data, idx, tm_data, min_data, max_data, acc_thre=0.06, tm_thre=0.1): # expected, time, min, max of index
         _tm_data = len(data)/200.0
         _min_data = min([d[idx] for d in data])
         _max_data = max([d[idx] for d in data])
-        _tm_thre = 0.1
+        _tm_thre = tm_thre
         # min_data = [min_data, min_thre]
         if isinstance(min_data, (int, float)):
             min_data = [min_data, 5]
@@ -194,7 +195,10 @@ class TestHiro(unittest.TestCase):
                     cmd += ","
             cmd += "\""
             os.system(cmd)
-        os.system('pdfunite '+' '.join(_pdf_names) + ' ' + pdf_name)
+        cmd_str = 'pdfunite '+' '.join(_pdf_names) + ' ' + pdf_name
+        cmd_str = cmd_str.replace('(', '\(')
+        cmd_str = cmd_str.replace(')', '\)')
+        os.system(cmd_str)
         return
 
     def check_acceleration(self, name):
@@ -294,7 +298,7 @@ class TestHiro(unittest.TestCase):
             data = self.load_log_data(q_filename)
 
             print "check setJointAngles(Clear)"
-            self.check_log_data(data, 6, 5, [-140+(i+1)*40/len(clear_time),20], -100.0)
+            self.check_log_data(data, 6, 5, [-140+(i+1)*40/len(clear_time),20], -100.0, acc_thre=0.2)
 
     def test_fullbody_setJointAngles_minus(self):
         self.fullbody_init()
@@ -536,9 +540,42 @@ class TestHiro(unittest.TestCase):
         # assertion
         data = self.load_log_data(q_filename)
         print "check setJointAnglesOfGroup(minus)"
-        self.check_log_data(data, 6, 7.19, -140, -120.0, acc_thre = 1.0)
+        self.check_log_data(data, 6, 7.19, -140, -120.0, acc_thre = 1.5, tm_thre = 0.3)
 
         self.robot.el_svc.setServoErrorLimit("all", 0.18) # default is 0.18
+
+    def testSetTargetPoseBothArm(self):
+        tm = 10
+        self.robot.goInitial()
+        posl1 = self.robot.getCurrentPosition('LARM_JOINT5')
+        posl2 = self.robot.getCurrentPosition('LARM_JOINT5')
+        posr1 = self.robot.getCurrentPosition('RARM_JOINT5')
+        posr2 = self.robot.getCurrentPosition('RARM_JOINT5')
+        rpyl1 = self.robot.getCurrentRPY('LARM_JOINT5')
+        rpyr1 = self.robot.getCurrentRPY('RARM_JOINT5')
+        posr1[0] += 0.05
+        posr2[2] += 0.08
+        posl1[0] -= 0.09
+        posl2[2] -= 0.07
+        # Til here initializing.
+
+        if not self.robot.setTargetPose('larm', posl1, rpyl1, tm):
+            assert(False)
+        if not self.robot.setTargetPose('rarm', posr1, rpyr1, tm):
+            assert(False)
+        print('Before waitInterpolationOfGroup(larm) begins.')
+        self.robot.waitInterpolationOfGroup('larm')
+        print('waitInterpolationOfGroup(larm) returned.')
+        self.robot.waitInterpolationOfGroup('rarm') # just to make sure
+        print('waitInterpolationOfGroup(rarm) returned.')
+        if not self.robot.setTargetPose('larm', posl2, rpyl1, tm):
+            assert(False)
+        if not self.robot.setTargetPose('rarm', posr2, rpyr1, tm):
+            assert(False)
+
+        # Making sure if reached here. If any error occurred. If not reached
+        # assert false should be returned earlier.
+        assert(True)  
 
 #unittest.main()
 if __name__ == '__main__':

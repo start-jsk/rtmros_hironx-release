@@ -71,18 +71,29 @@ class HIRONX(HrpsysConfigurator):
                         'LARM_JOINT3', 'LARM_JOINT4', 'LARM_JOINT5']]]
 
     '''
-    For OffPose and InitialPose, the angles of each joint are listed in the
+    For OffPose and _InitialPose, the angles of each joint are listed in the
     ordered as defined in Groups variable.'''
     OffPose = [[0], [0, 0],
                    [25, -139, -157, 45, 0, 0],
                    [-25, -139, -157, -45, 0, 0],
                    [0, 0, 0, 0],
                    [0, 0, 0, 0]]
-    InitialPose = [[0], [0, 0],
+    # With this pose the EEFs level up the tabletop surface.
+    _InitialPose = [[0], [0, 0],
                    [-0.6, 0, -100, 15.2, 9.4, 3.2],
                    [0.6, 0, -100, -15.2, 9.4, -3.2],
                    [0, 0, 0, 0],
                    [0, 0, 0, 0]]
+    # This pose sets joint angles at the factory initial pose. No danger, but
+    # no real advange either for in normal usage.
+    # See https://github.com/start-jsk/rtmros_hironx/issues/107
+    _InitialPose_Factory = [[0], [0, 0],
+                   [-0, 0, -130, 0, 0, 0],
+                   [0, 0, -130, 0, 0, 0],
+                   [0, 0, 0, 0],
+                   [0, 0, 0, 0]]
+    INITPOS_TYPE_EVEN = 0
+    INITPOS_TYPE_FACTORY = 1
 
     HandGroups = {'rhand': [2, 3, 4, 5], 'lhand': [6, 7, 8, 9]}
 
@@ -120,7 +131,7 @@ class HIRONX(HrpsysConfigurator):
             self.seq_svc.waitInterpolationOfGroup(self.Groups[i][0])
         self.servoOff(wait=False)
 
-    def goInitial(self, tm=7, wait=True):
+    def goInitial(self, tm=7, wait=True, init_pose_type=0):
         '''
         Move arms to the predefined (as member variable) "initialized" pose.
 
@@ -130,15 +141,24 @@ class HIRONX(HrpsysConfigurator):
         @param wait: If true, SequencePlayer.waitInterpolationOfGroup gets run.
                      (TODO: Elaborate what this means...Even after having taken
                      a look at its source code I can't tell what it means.)
+        @type init_pose_type: int
+        @param init_pose_type: 0: default init pose (specified as _InitialPose)
+                               1: factory init pose (specified as
+                                  _InitialPose_Factory)
         '''
+        if init_pose_type == self.INITPOS_TYPE_FACTORY:
+            _INITPOSE = self._InitialPose_Factory
+        else:
+            _INITPOSE = self._InitialPose
+
         ret = True
         for i in range(len(self.Groups)):
-            # radangles = [x/180.0*math.pi for x in self.InitialPose[i]]
+            # radangles = [x/180.0*math.pi for x in self._InitialPose[i]]
             print self.configurator_name, 'self.setJointAnglesOfGroup(', \
-                  self.Groups[i][0], ',', self.InitialPose[i], ', ', tm, \
+                  self.Groups[i][0], ',', _INITPOSE[i], ', ', tm, \
                   ',wait=False)'
             ret &= self.setJointAnglesOfGroup(self.Groups[i][0],
-                                              self.InitialPose[i],
+                                              _INITPOSE[i],
                                               tm, wait=False)
         if wait:
             for i in range(len(self.Groups)):
@@ -173,16 +193,27 @@ class HIRONX(HrpsysConfigurator):
     def HandOpen(self, hand=None, effort=None):
         '''
         Set the stretch between two fingers of the specified hand as
-        hardcoded value (100mm).
+        hardcoded value (100mm), by internally calling self.setHandWidth.
 
         @type hand: str
+        @param hand: Name of the hand joint group. In the default 
+                     setting of HIRONX, hand joint groups are defined
+                     in member 'HandGroups' where 'lhand' and 'rhand'
+                     are added.
         @type effort: int
         '''
         self.setHandWidth(hand, 100, effort=effort)
 
     def HandClose(self, hand=None, effort=None):
         '''
+        Close 2-finger hand, by internally calling self.setHandWidth 
+        setting 0 width.
+
         @type hand: str
+        @param hand: Name of the hand joint group. In the default 
+                     setting of HIRONX, hand joint groups are defined
+                     in member 'HandGroups' where 'lhand' and 'rhand'
+                     are added.
         @type effort: int
         '''
         self.setHandWidth(hand, 0, effort=effort)
@@ -190,7 +221,10 @@ class HIRONX(HrpsysConfigurator):
     def setHandJointAngles(self, hand, angles, tm=1):
         '''
         @type hand: str
-        @param hand: which hand. (TODO: List the possible values)
+        @param hand: Name of the hand joint group. In the default 
+                     setting of HIRONX, hand joint groups are defined
+                     in member 'HandGroups' where 'lhand' and 'rhand'
+                     are added.
         @type angles: OpenHRP::ServoControllerService::dSequence.
         @param angles: List of (TODO: document). Elements are in degree.
         @param tm: Time to complete the task.
@@ -209,6 +243,10 @@ class HIRONX(HrpsysConfigurator):
     def setHandWidth(self, hand, width, tm=1, effort=None):
         '''
         @type hand: str
+        @param hand: Name of the hand joint group. In the default 
+                     setting of HIRONX, hand joint groups are defined
+                     in member 'HandGroups' where 'lhand' and 'rhand'
+                     are added.
         @param width: Max=100.
         @param tm: Time to complete the move.
         @type effort: int
@@ -856,7 +894,7 @@ class HIRONX(HrpsysConfigurator):
         '''
         return HrpsysConfigurator.setTargetPose(self, gname, pos, rpy, tm, ref_frame_name)
 
-    def setTargetPoseRelative(self, gname, eename, dx=0, dy=0, dz=0,
+    def setTargetPoseRelative(self, gname, target_frame, dx=0, dy=0, dz=0,
                               dr=0, dp=0, dw=0, tm=10, wait=True):
         '''
         @see: HrpsysConfigurator.setTargetPoseRelative
@@ -871,12 +909,12 @@ class HIRONX(HrpsysConfigurator):
                                         tm=0.1)
 
         @param gname: Name of the joint group.
-        @param eename: Name of the joint.
+        @param target_frame: Frame that the pose will be calculated against.
         @rtype: bool
         '''
-        return HrpsysConfigurator.setTargetPoseRelative(self, gname, eename,
-                                                        dx, dy, dz, dr, dp, dw,
-                                                        tm, wait)
+        return HrpsysConfigurator.setTargetPoseRelative(self, gname,
+                                                     target_frame, dx, dy, dz,
+                                                     dr, dp, dw, tm, wait)
 
     def waitInterpolationOfGroup(self, groupname):
         '''
@@ -945,3 +983,13 @@ class HIRONX(HrpsysConfigurator):
         @return: What RobotHardware.writeDigitalOutput returns (TODO: document)
         '''
         HrpsysConfigurator.writeDigitalOutputWithMask(self, dout, mask)
+
+    def clear(self):
+        '''
+        @see HrpsysConfigurator.clear
+        Clears the Sequencer's current operation. Works for joint groups too.
+
+        Discussed in https://github.com/fkanehiro/hrpsys-base/issues/158
+        Examples is found in a unit test: https://github.com/start-jsk/rtmros_hironx/blob/bb0672be3e03e5366e03fe50520e215302b8419f/hironx_ros_bridge/test/test_hironx.py#L293
+        '''
+        HrpsysConfigurator.clear(self)
