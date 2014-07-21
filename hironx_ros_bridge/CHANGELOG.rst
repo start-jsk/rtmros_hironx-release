@@ -2,6 +2,19 @@
 Changelog for package hironx_ros_bridge
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.18 (2014-07-21)
+-------------------
+* (hironx_client) Fixed some methods not returning what super class returns.
+* Contributors: Isaac IY Saito
+
+1.0.17 (2014-07-13)
+-------------------
+* 1st fully functional release (robot-compile-setup.sh, robot-system-check).
+* Add install script for Vision PC Ubuntu.
+* Add Nitta JR3 driver
+* Adjust a few launch files to accommodate servo controller argument.
+* Contributors: Kei Okada, Isaac IY Saito, Hajime Saito
+
 1.0.16 (2014-07-08)
 -------------------
 * First release of install script suites (for QNX)
