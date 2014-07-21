@@ -1,3 +1,25 @@
+## rtmros_hironx (hydro) - 1.0.18-0
+
+The packages in the `rtmros_hironx` repository were released into the `hydro` distro by running `/usr/bin/bloom-release --rosdistro hydro --track hydro rtmros_hironx` on `Mon, 21 Jul 2014 06:18:59 -0000`
+
+These packages were released:
+- `hironx_moveit_config`
+- `hironx_ros_bridge`
+- `rtmros_hironx`
+
+Version of package(s) in repository `rtmros_hironx`:
+- rosdistro version: `1.0.17-1`
+- old version: `1.0.17-1`
+- new version: `1.0.18-0`
+
+Versions of tools used:
+- bloom version: `0.5.10`
+- catkin_pkg version: `0.2.3`
+- rosdep version: `0.10.28`
+- rosdistro version: `0.3.5`
+- vcstools version: `0.1.35`
+
+
 ## rtmros_hironx (hydro) - 1.0.17-1
 
 The packages in the `rtmros_hironx` repository were released into the `hydro` distro by running `/usr/bin/bloom-release --rosdistro hydro --track hydro rtmros_hironx` on `Sun, 13 Jul 2014 03:14:06 -0000`
