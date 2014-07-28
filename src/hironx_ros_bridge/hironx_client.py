@@ -811,6 +811,21 @@ class HIRONX(HrpsysConfigurator):
         #      Typically with simulator, erro msg might look like this;
         #      'NoneType' object has no attribute 'readDigitalInput'
 
+    def readDigitaloutput(self):
+        '''
+        @see: HrpsysConfigurator.readDigitaloutput
+
+        Digital input consits of 14 bits. The last 2 bits are lacking
+        and compensated, so that the last 4 bits are 0x4 instead of 0x1.
+
+        @rtype: [int]
+        @return: List of 2 oct(string) values.
+        '''
+        return HrpsysConfigurator.readDigitaloutput(self)
+        #TODO: Catch AttributeError that occurs when RobotHardware not found.
+        #      Typically with simulator, erro msg might look like this;
+        #      'NoneType' object has no attribute 'readDigitaloutput'
+
     def setJointAngle(self, jname, angle, tm):
         '''
         @see: HrpsysConfigurator.setJointAngle
@@ -943,7 +958,8 @@ class HIRONX(HrpsysConfigurator):
                      What each element stands for depends on how
                      the robot's imlemented. Consult the hardware manual.
 
-        @return: What RobotHardware.writeDigitalOutput returns (TODO: document)
+        @rtype: bool
+        @return: RobotHardware.writeDigitalOutput returns True if writable. False otherwise.
         '''
         return HrpsysConfigurator.writeDigitalOutput(self, dout)
 
@@ -980,7 +996,8 @@ class HIRONX(HrpsysConfigurator):
         @type mask: [int]
         @param mask: List of masking bits, length of 32 bits where elements are
                      0 or 1.
-        @return: What RobotHardware.writeDigitalOutput returns (TODO: document)
+        @rtype: bool
+        @return: RobotHardware.writeDigitalOutput returns True if writable. False otherwise.
         '''
         return HrpsysConfigurator.writeDigitalOutputWithMask(self, dout, mask)
 
