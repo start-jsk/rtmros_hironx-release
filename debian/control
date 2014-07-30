@@ -1,0 +1,12 @@
+Source: ros-groovy-rtmros-hironx
+Section: misc
+Priority: extra
+Maintainer: Kei Okada <k-okada@jsk.t.u-tokyo.ac.jp>
+Build-Depends: debhelper (>= 7.0.0), ros-groovy-catkin
+Homepage: http://ros.org/wiki/rtmros_hironx/
+Standards-Version: 3.9.2
+
+Package: ros-groovy-rtmros-hironx
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-groovy-hironx-moveit-config, ros-groovy-hironx-ros-bridge
+Description: The rtmros_hironx package
