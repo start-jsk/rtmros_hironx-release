@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 
 import sys, tempfile, zipfile, socket, time, subprocess
+from db_check import *
 from qnx_cpu_check import *
 from qnx_hdd_check import *
 from qnx_eth_check import *
 #from qnx_qconfig import *
 from hrpiob_check import *
 from md5sum_check import *
+
 
 class Logger(object):
     def __init__(self, filename="Default.log"):
@@ -27,6 +29,7 @@ os.mkdir(tmp_dir)
 sys.stdout = Logger('%s/robot-system-check-result.log'%(tmp_dir))
 
 try:
+    ret = True
 
     # run cpu check
     print "* Check Environment Variables"
@@ -34,13 +37,16 @@ try:
     print "  Check $LD_LIBRARY_PATH ... ", os.environ.get('LD_LIBRARY_PATH')
     print "  Check $PYTHON_PATH ... ", os.environ.get('PYTHON_PATH')
 
+    # db check
+    ret = db_check("start testing on " + hostname) and ret
+
     # run cpu check
     print "* Check CPU Info"
-    ret = qnx_cpu_check()
+    ret = qnx_cpu_check() and ret
 
     # check hdd space
     print "* Check HDD Info"
-    ret = qnx_hdd_check()
+    ret = qnx_hdd_check() and ret
 
     # run qnx config
     #print "* Check QNX Info"
@@ -48,7 +54,7 @@ try:
 
     # check eth
     print "* Check Eth Info"
-    ret = qnx_eth_check()
+    ret = qnx_eth_check() and ret
 
     # check hrpIo.so
     print "* Check libhrpIo.so"
@@ -71,7 +77,7 @@ try:
     ret = md5sum_check_dir(['/usr/pkg/share',  0x814de4e7c790d11dc4764139b5fb3625L], output_dir = tmp_dir) and ret
 
     print "* Check /opt/nextage-open directories"
-    ret = md5sum_check_dir(['/opt/nextage-open',    0x5644cb667d7241ebec88d79b610b4558L], output_dir = tmp_dir) and ret
+    ret = md5sum_check_dir(['/opt/nextage-open',    0x5c63a325454cc0dc9c1614c427705a0L], output_dir = tmp_dir) and ret
 
     print "* Check /var files"
     import md5sum_var
@@ -104,17 +110,34 @@ try:
     import md5sum_opt_nextage_open
     ret = md5sum_check_files('/opt/nextage-open', md5sum_opt_nextage_open.info) and ret
 
+    print "* Check /opt/jsk"
+    import md5sum_opt_jsk
+    try:
+        open("/opt/jsk/.checking", "w+").write("checking by TORK")
+    except Exception, e:
+        print e
+        raise(e)
+    ret = md5sum_check_files('/opt/jsk', md5sum_opt_jsk.info)    and ret
+
     print ""
     print "---"
     print ""
+    print "                              *******"
     print "Done all test, Result is ... ", ret
+    print "                              *******"
 
     if ret:
         print ""
         print "--- !!! CONGRATULATIONS !!! --- "
         print ""
 
+    # Version of Installability Checker. 
+    # TODO: Clarify versioning policy. As of now it corresponds to that of hironx_ros_bridge.
+    print('\tInstallability Checker version = 1.0.21')
+    print('\tFor any issue please report to TORK or https://github.com/start-jsk/rtmros_hironx/issues')
+
 except Exception, e:
+    ret = False
     print "*** "
     print "*** Somegthing was wrong...", e.message
     print "*** "
@@ -127,6 +150,8 @@ finally:
     print "Saving results.... to %s}"%logfilename
 
     try:
+        # db check
+        db_check(open('%s/robot-system-check-result.log'%(tmp_dir)).read())
         subprocess.check_call("cd %s; zip --password %s %s/%s -r ."%(tmp_base_dir, passwd, os.getcwd(), logfilename), shell=True, stdout=subprocess.PIPE)
     except Exception, e:
         print "*** Somegthing was wrong...", e.message
@@ -146,8 +171,11 @@ finally:
     print ""
     
 
+    if ret:
+        sys.exit(0)
+    else:
+        sys.exit(-1)
 
-sys.exit(ret)
 
 
 
