@@ -1,0 +1,103 @@
+From 01b5100c07029da247edf606715328f1ca1335e0 Mon Sep 17 00:00:00 2001
+From: Kei Okada <k-okada@jsk.t.u-tokyo.ac.jp>
+Date: Tue, 2 Sep 2014 09:05:49 +0900
+Subject: [PATCH] disable pr2_controllers_msgs for groovy
+
+---
+ catkin.cmake |   36 ++++++++++++++++++------------------
+ package.xml  |    4 ++--
+ 2 files changed, 20 insertions(+), 20 deletions(-)
+
+diff --git a/catkin.cmake b/catkin.cmake
+index d3869c1..895156e 100644
+--- a/catkin.cmake
++++ b/catkin.cmake
+@@ -1,12 +1,12 @@
+ cmake_minimum_required(VERSION 2.8.3)
+ project(hironx_ros_bridge)
+ 
+-find_package(catkin REQUIRED COMPONENTS hrpsys_ros_bridge pr2_controllers_msgs roslib rostest)
++find_package(catkin REQUIRED COMPONENTS hrpsys_ros_bridge roslib rostest)
+ find_package(Boost REQUIRED COMPONENTS system)
+ 
+ catkin_package(
+     CATKIN_DEPENDS std_msgs
+-    CATKIN_DEPENDS hrpsys_ros_bridge pr2_controllers_msgs roslib #
++    CATKIN_DEPENDS hrpsys_ros_bridge roslib #
+     INCLUDE_DIRS include
+     LIBRARIES ros_client_cpp
+ )
+@@ -51,21 +51,21 @@ add_custom_target(${PROJECT_NAME}_model_files ALL DEPENDS ${PROJECT_SOURCE_DIR}/
+ include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+ 
+ #add_definitions("-std=c++0x")
+-add_library(
+-  ros_client_cpp include/ros_client.cpp
+-)
++# add_library(
++#   ros_client_cpp include/ros_client.cpp
++# )
+ 
+-add_executable(
+-    acceptancetest_hironx_cpp src/acceptancetest_hironx.cpp
+-)
++# add_executable(
++#     acceptancetest_hironx_cpp src/acceptancetest_hironx.cpp
++# )
+ 
+-target_link_libraries(
+-  acceptancetest_hironx_cpp
+-  ros_client_cpp ${catkin_LIBRARIES} ${Boost_LIBRARIES}
+-)
++# target_link_libraries(
++#   acceptancetest_hironx_cpp
++#   ros_client_cpp ${catkin_LIBRARIES} ${Boost_LIBRARIES}
++# )
+ 
+-install(TARGETS acceptancetest_hironx_cpp
+-        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
++# install(TARGETS acceptancetest_hironx_cpp
++#         RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+ 
+ install(DIRECTORY launch DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION} PATTERN ".svn" EXCLUDE)
+ install(DIRECTORY scripts DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION} USE_SOURCE_PERMISSIONS PATTERN ".svn" EXCLUDE)
+@@ -91,10 +91,10 @@ install(CODE "
+   endforeach()
+   ")
+ 
+-install(TARGETS acceptancetest_hironx_cpp ros_client_cpp
+-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
++# install(TARGETS acceptancetest_hironx_cpp ros_client_cpp
++#         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
++#         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
++#         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+ 
+ install(DIRECTORY include/
+         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+diff --git a/package.xml b/package.xml
+index 06b7b4c..47c76ac 100644
+--- a/package.xml
++++ b/package.xml
+@@ -16,7 +16,7 @@
+   <buildtool_depend>catkin</buildtool_depend>
+   <build_depend>hrpsys_ros_bridge</build_depend> <!-- Needed to transitively depend on openhrp3. See https://github.com/start-jsk/rtmros_hironx/pull/30#commitcomment-5535604 -->
+   <build_depend>mk</build_depend>
+-  <build_depend>pr2_controllers_msgs</build_depend>
++  <!-- <build_depend>pr2_controllers_msgs</build_depend> -->
+   <build_depend>roslib</build_depend>
+   <build_depend>rosbash</build_depend>
+   <build_depend>rosbuild</build_depend>
+@@ -27,7 +27,7 @@
+   <run_depend>gnuplot</run_depend>
+   <run_depend>moveit_commander</run_depend>
+   <run_depend>hrpsys_ros_bridge</run_depend>
+-  <run_depend>pr2_controllers_msgs</run_depend>
++  <!-- <run_depend>pr2_controllers_msgs</run_depend> -->
+   <run_depend>roslib</run_depend>
+   <run_depend>rosbash</run_depend>
+   <run_depend>rospy</run_depend>
+-- 
+1.7.9.5
+
