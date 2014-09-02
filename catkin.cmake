@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(hironx_ros_bridge)
 
-find_package(catkin REQUIRED COMPONENTS hrpsys_ros_bridge pr2_controllers_msgs roslib rostest)
+find_package(catkin REQUIRED COMPONENTS hrpsys_ros_bridge roslib rostest)
 find_package(Boost REQUIRED COMPONENTS system)
 
 catkin_package(
     CATKIN_DEPENDS std_msgs
-    CATKIN_DEPENDS hrpsys_ros_bridge pr2_controllers_msgs roslib #
+    CATKIN_DEPENDS hrpsys_ros_bridge roslib #
     INCLUDE_DIRS include
     LIBRARIES ros_client_cpp
 )
@@ -51,21 +51,21 @@ add_custom_target(${PROJECT_NAME}_model_files ALL DEPENDS ${PROJECT_SOURCE_DIR}/
 include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
 #add_definitions("-std=c++0x")
-add_library(
-  ros_client_cpp include/ros_client.cpp
-)
+# add_library(
+#   ros_client_cpp include/ros_client.cpp
+# )
 
-add_executable(
-    acceptancetest_hironx_cpp src/acceptancetest_hironx.cpp
-)
+# add_executable(
+#     acceptancetest_hironx_cpp src/acceptancetest_hironx.cpp
+# )
 
-target_link_libraries(
-  acceptancetest_hironx_cpp
-  ros_client_cpp ${catkin_LIBRARIES} ${Boost_LIBRARIES}
-)
+# target_link_libraries(
+#   acceptancetest_hironx_cpp
+#   ros_client_cpp ${catkin_LIBRARIES} ${Boost_LIBRARIES}
+# )
 
-install(TARGETS acceptancetest_hironx_cpp
-        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+# install(TARGETS acceptancetest_hironx_cpp
+#         RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 install(DIRECTORY launch DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION} PATTERN ".svn" EXCLUDE)
 install(DIRECTORY scripts DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION} USE_SOURCE_PERMISSIONS PATTERN ".svn" EXCLUDE)
@@ -91,10 +91,10 @@ install(CODE "
   endforeach()
   ")
 
-install(TARGETS acceptancetest_hironx_cpp ros_client_cpp
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+# install(TARGETS acceptancetest_hironx_cpp ros_client_cpp
+#         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
 
 install(DIRECTORY include/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
