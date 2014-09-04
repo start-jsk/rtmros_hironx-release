@@ -1,0 +1,24 @@
+From de950ee419b6fbeb1161890f35ef63cd224bed0b Mon Sep 17 00:00:00 2001
+From: Kei Okada <k-okada@jsk.t.u-tokyo.ac.jp>
+Date: Thu, 4 Sep 2014 14:57:44 +0900
+Subject: [PATCH 2/2] forget to disable LIBRARIES ros_clinet_cpp
+
+---
+ catkin.cmake |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/catkin.cmake b/catkin.cmake
+index 895156e..3a4ce93 100644
+--- a/catkin.cmake
++++ b/catkin.cmake
+@@ -8,7 +8,6 @@ catkin_package(
+     CATKIN_DEPENDS std_msgs
+     CATKIN_DEPENDS hrpsys_ros_bridge roslib #
+     INCLUDE_DIRS include
+-    LIBRARIES ros_client_cpp
+ )
+ 
+ catkin_python_setup()
+-- 
+1.7.9.5
+

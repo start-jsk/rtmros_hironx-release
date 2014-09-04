@@ -1,7 +1,7 @@
-From 01b5100c07029da247edf606715328f1ca1335e0 Mon Sep 17 00:00:00 2001
+From 6a722ad9a0b0c1a8076fb251150a4b04140ce4e2 Mon Sep 17 00:00:00 2001
 From: Kei Okada <k-okada@jsk.t.u-tokyo.ac.jp>
 Date: Tue, 2 Sep 2014 09:05:49 +0900
-Subject: [PATCH] disable pr2_controllers_msgs for groovy
+Subject: [PATCH 1/2] disable pr2_controllers_msgs for groovy
 
 ---
  catkin.cmake |   36 ++++++++++++++++++------------------
