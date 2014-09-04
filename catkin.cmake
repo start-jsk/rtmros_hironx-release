@@ -8,7 +8,6 @@ catkin_package(
     CATKIN_DEPENDS std_msgs
     CATKIN_DEPENDS hrpsys_ros_bridge roslib #
     INCLUDE_DIRS include
-    LIBRARIES ros_client_cpp
 )
 
 catkin_python_setup()
