@@ -2,12 +2,20 @@
 Changelog for package hironx_ros_bridge
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.25 (2014-10-03)
+-------------------
+* (hironx_ros_bridge)
+
+  * Add impedance controller.
+  * Add Kinect launch file.
+* Contributors: Hiroaki Yaguchi, Isaac IY Saito, Kei Okada
+
 1.0.24 (2014-09-16)
 -------------------
 * (hironx.py)
 
- * Start ROS_Client in addition to RTM client (HIRONX).
- * if hrpsys_config.py is not new, then client must know fk version.
+  * Start ROS_Client in addition to RTM client (HIRONX).
+  * if hrpsys_config.py is not new, then client must know fk version.
 * Add roslint. Code cleaned to pass roslint
 * Contributors: Kei Okada, Isaac IY Saito
 
