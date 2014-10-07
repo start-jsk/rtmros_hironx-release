@@ -2,6 +2,9 @@
 Changelog for package rtmros_hironx
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.26 (2014-10-07)
+-------------------
+
 1.0.25 (2014-10-03)
 -------------------
 * New package hironx_calibration, hironx_tutorial added.
