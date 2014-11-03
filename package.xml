@@ -1,16 +1,18 @@
 <?xml version="1.0"?>
 <package>
   <name>hironx_tutorial</name>
-  <version>1.0.26</version>
+  <version>1.0.27</version>
   <description>Sample / demo / tutorial programs for <a href = "http://wiki.ros.org/hironx_ros_bridge">Hiro</a> and 
    <a href = "http://wiki.ros.org/rtmros_nextage">NEXTAGE OPEN (NXO)</a> robot by Kawada Industries.
    All sample code that works on Hiro robot should work also on NEXTAGE OPEN. 
    The opposite is, however, not always true (e.g. gripper operation is different in NXO). 
   </description>
   <maintainer email="dev@opensource-robotics.tokyo.jp">Isaac Saito</maintainer>
-  <author email="iisaito@opensource-robotics.tokyo.jp">Isaac IY Saito</author>
+  <author email="iiysaito@opensource-robotics.tokyo.jp">Isaac IY Saito</author>
+  <author email="method_aspect_card@yahoo.co.jp">Daiki Maekawa</author>
   <license>BSD</license>
-
+  <license>MIT</license>
+  
   <url type="website">http://wiki.ros.org/hironx_tutorial</url>
   <url type="website">http://docs.ros.org/hydro/api/hironx_tutorial/html/</url>
   <url type="repository">https://github.com/tork-a/hironx_tutorial</url>
