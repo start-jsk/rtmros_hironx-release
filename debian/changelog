@@ -1,0 +1,37 @@
+ros-hydro-hironx-tutorial (1.0.27-0raring) raring; urgency=high
+
+  * Add more sample scripts (https://github.com/tork-a/hironx_tutorial/pull/10).
+  * Contributors: Isaac IY Saito
+
+ -- Isaac Saito <dev@opensource-robotics.tokyo.jp>  Mon, 03 Nov 2014 15:00:00 -0000
+
+ros-hydro-hironx-tutorial (1.0.26-0raring) raring; urgency=high
+
+
+
+ -- Isaac Saito <dev@opensource-robotics.tokyo.jp>  Mon, 06 Oct 2014 15:00:00 -0000
+
+ros-hydro-hironx-tutorial (1.0.25-0raring) raring; urgency=high
+
+  * New package hironx_tutorial added.
+  * Contributors: Isaac IY Saito
+
+ -- Isaac Saito <dev@opensource-robotics.tokyo.jp>  Thu, 02 Oct 2014 15:00:00 -0000
+
+ros-hydro-hironx-tutorial (0.1.2-0raring) raring; urgency=high
+
+  * (stampit) Fix #11 <https://github.com/tork-a/hironx_tutorial/issues/11> (rtm connect error).
+  * (stampit) Use correct hand command names.
+  * Contributors: Isaac I.Y. Saito
+
+ -- Isaac Saito <dev@opensource-robotics.tokyo.jp>  Mon, 25 Aug 2014 15:00:00 -0000
+
+ros-hydro-hironx-tutorial (0.1.1-0raring) raring; urgency=high
+
+  * Remove install target on empty test folder to pass ROS buildfarm.
+  * Add leap_motion.
+  * Contributors: Isaac Saito
+
+ -- Isaac Saito <dev@opensource-robotics.tokyo.jp>  Mon, 26 May 2014 15:00:00 -0000
+
+
