@@ -109,6 +109,8 @@ class HIRONX(HrpsysConfigurator):
     sc = None
     sc_svc = None
 
+    hrpsys_version = '0.0.0'
+
     def init(self, robotname="HiroNX(Robot)0", url=""):
         '''
         Calls init from its superclass, which tries to connect RTCManager,
@@ -121,6 +123,13 @@ class HIRONX(HrpsysConfigurator):
         '''
         HrpsysConfigurator.init(self, robotname=robotname, url=url)
         self.setSelfGroups()
+        self.hrpsys_version = self.fk.ref.get_component_profile().version
+        # connect ic if needed
+        for sensor in ['lhsensor' , 'rhsensor']:
+            if self.ic and self.ic.port(sensor) and self.ic.port(sensor).get_port_profile() and \
+                    not self.ic.port(sensor).get_port_profile().connector_profiles :
+                connectPorts(self.rh.port(sensor), self.ic.port(sensor))
+
 
     def goOffPose(self, tm=7):
         '''
@@ -672,3 +681,91 @@ class HIRONX(HrpsysConfigurator):
 
     def removeForceSensorOffset(self):
         self.rh_svc.removeForceSensorOffset()
+
+    def getCurrentPose(self, lname=None, frame_name='WAIST'):
+        if ':' in lname:
+            frame_name = None
+        
+        if self.hrpsys_version <= '315.2.4':
+            print "\033[33m getCurrentPose({}, {}) is not supported on {}\033[0m".format(lname, frame_name, self.hrpsys_version)
+            return HrpsysConfigurator.getCurrentPose(self, lname)
+        else:
+            return HrpsysConfigurator.getCurrentPose(self, lname, frame_name)
+    
+    def getCurrentPosition(self, lname=None, frame_name='WAIST'):
+        if ':' in lname:
+            frame_name = None
+
+        if self.hrpsys_version <= '315.2.4':
+            print "\033[33m getCurrentPosition({}, {}) is not supported on {}\033[0m".format(lname, frame_name, self.hrpsys_version)
+            return HrpsysConfigurator.getCurrentPosition(self, lname)
+        else:
+            return HrpsysConfigurator.getCurrentPosition(self, lname, frame_name)
+
+    def getCurrentRotation(self, lname=None, frame_name='WAIST'):
+        if ':' in lname:
+            frame_name = None
+        
+        if self.hrpsys_version <= '315.2.4':
+            print "\033[33m getCurrentRotation({}, {}) is not supported on {}\033[0m".format(lname, frame_name, self.hrpsys_version)
+            return HrpsysConfigurator.getCurrentRotation(self, lname)
+        else:
+            return HrpsysConfigurator.getCurrentRotation(self, lname, frame_name)
+    
+    def getCurrentRPY(self, lname, frame_name='WAIST'):
+        if ':' in lname:
+            frame_name = None
+
+        if self.hrpsys_version <= '315.2.4':
+            print "\033[33m getCurrentRPY({}, {}) is not supported on {}\033[0m".format(lname, frame_name, self.hrpsys_version)
+            return HrpsysConfigurator.getCurrentRPY(self, lname)
+        else:
+            return HrpsysConfigurator.getCurrentRPY(self, lname, frame_name)
+
+    def getReferencePose(self, lname, frame_name='WAIST'):
+        if ':' in lname:
+            frame_name = None
+        
+        if self.hrpsys_version <= '315.2.4':
+            print "\033[33m getReferencePose({}, {}) is not supported on {}\033[0m".format(lname, frame_name, self.hrpsys_version)
+            return HrpsysConfigurator.getReferencePose(self, lname)
+        else:
+            return HrpsysConfigurator.getReferencePose(self, lname, frame_name)
+
+    def getReferencePosition(self, lname, frame_name='WAIST'):
+        if ':' in lname:
+            frame_name = None
+        
+        if self.hrpsys_version <= '315.2.4':
+            print "\033[33m getReferencePosition({}, {}) is not supported on {}\033[0m".format(lname, frame_name, self.hrpsys_version)
+            return HrpsysConfigurator.getReferencePosition(self, lname)
+        else:
+            return HrpsysConfigurator.getReferencePosition(self, lname, frame_name)
+
+    def getReferenceRotation(self, lname, frame_name='WAIST'):
+        if ':' in lname:
+            frame_name = None
+        
+        if self.hrpsys_version <= '315.2.4':
+            print "\033[33m getReferenceRotation({}, {}) is not supported on {}\033[0m".format(lname, frame_name, self.hrpsys_version)
+            return HrpsysConfigurator.getReferenceRotation(self, lname)
+        else:
+            return HrpsysConfigurator.getReferenceRotation(self, lname, frame_name)
+
+    def getReferenceRPY(self, lname, frame_name='WAIST'):
+        if ':' in lname:
+            frame_name = None
+        
+        if self.hrpsys_version <= '315.2.4':
+            print "\033[33m getReferenceRPY({}, {}) is not supported on {}\033[0m".format(lname, frame_name, self.hrpsys_version)
+            return HrpsysConfigurator.getReferenceRPY(self, lname)
+        else:
+            return HrpsysConfigurator.getReferenceRPY(self, lname, frame_name)
+    
+    def setTargetPose(self, gname, pos, rpy, tm, frame_name='WAIST'):
+        if self.hrpsys_version <= '315.2.4':
+            print "\033[33m setTargetPose({}, {}, {}, {}, {}) is not supported on {}\033[0m".format(gname, pos, rpy, tm, frame_name, self.hrpsys_version)
+            return HrpsysConfigurator.setTargetPose(self, gname, pos, rpy, tm)
+        else:
+            return HrpsysConfigurator.setTargetPose(self, gname, pos, rpy, tm, frame_name)
+
