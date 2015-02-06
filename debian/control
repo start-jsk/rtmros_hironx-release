@@ -1,0 +1,12 @@
+Source: ros-indigo-hironx-ros-bridge
+Section: misc
+Priority: extra
+Maintainer: Kei Okada <k-okada@jsk.t.u-tokyo.ac.jp>
+Build-Depends: debhelper (>= 9.0.0), gnuplot, ros-indigo-catkin, ros-indigo-hrpsys-ros-bridge, ros-indigo-mk, ros-indigo-pr2-controllers-msgs, ros-indigo-rosbash, ros-indigo-rosbuild, ros-indigo-roslang, ros-indigo-roslib, ros-indigo-roslint, unzip
+Homepage: http://ros.org/wiki/hironx_ros_bridge
+Standards-Version: 3.9.2
+
+Package: ros-indigo-hironx-ros-bridge
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, gnuplot, ros-indigo-hrpsys-ros-bridge, ros-indigo-moveit-commander, ros-indigo-openni2-launch, ros-indigo-pr2-controllers-msgs, ros-indigo-rosbash, ros-indigo-roslang, ros-indigo-roslib, ros-indigo-rospy, ros-indigo-tf
+Description: ROS-OpenRTM interfacing package for the opensource version of Kawada's Hiro/NEXTAGE dual-arm robot. NOTE: This package is multi-license -- pay attention to file header in each file where license is declared. For Creative Commons nc 4.0 applied, see here.
