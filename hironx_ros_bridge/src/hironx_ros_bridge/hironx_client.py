@@ -53,6 +53,34 @@ _MSG_ASK_ISSUEREPORT = 'Your report to ' + \
                        'https://github.com/start-jsk/rtmros_hironx/issues ' + \
                        'about the issue you are seeing is appreciated.'
 
+def delete_module(modname, paranoid=None):
+    from sys import modules
+    try:
+        thismod = modules[modname]
+    except KeyError:
+        raise ValueError(modname)
+    these_symbols = dir(thismod)
+    if paranoid:
+        try:
+            paranoid[:]  # sequence support
+        except:
+            raise ValueError('must supply a finite list for paranoid')
+        else:
+            these_symbols = paranoid[:]
+    del modules[modname]
+    for mod in modules.values():
+        try:
+            delattr(mod, modname)
+        except AttributeError:
+            pass
+        if paranoid:
+            for symbol in these_symbols:
+                if symbol[:2] == '__':  # ignore special symbols
+                    continue
+                try:
+                    delattr(mod, symbol)
+                except AttributeError:
+                    pass
 
 class HIRONX(HrpsysConfigurator):
     '''
@@ -124,6 +152,14 @@ class HIRONX(HrpsysConfigurator):
         HrpsysConfigurator.init(self, robotname=robotname, url=url)
         self.setSelfGroups()
         self.hrpsys_version = self.fk.ref.get_component_profile().version
+
+        # reload for hrpsys 315.1.8
+        if self.hrpsys_version < '315.2.0':
+            delete_module('ImpedanceControllerService_idl')
+            sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), 'hrpsys_315_1_9/hrpsys'))
+            import ImpedanceControllerService_idl
+            self.ic_svc = narrow(self.ic.service("service0"), "ImpedanceControllerService")
+
         # connect ic if needed
         for sensor in ['lhsensor' , 'rhsensor']:
             if self.ic and self.ic.port(sensor) and self.ic.port(sensor).get_port_profile() and \
@@ -200,15 +236,14 @@ class HIRONX(HrpsysConfigurator):
             ['log', "DataLogger"],
             ]
         if hasattr(self, 'rmfo'):
-            try:
-                self.ms.create("RemoveForceSensorLinkOffset")
+            self.ms.load("RemoveForceSensorLinkOffset")
+            self.ms.load("AbsoluteForceSensor")
+            if "RemoveForceSensorLinkOffset" in self.ms.get_factory_names():
                 rtclist.append(['rmfo', "RemoveForceSensorLinkOffset"])
-            except:
-                try:
-                    self.ms.create("AbsoluteForceSensor")
-                    rtclist.append(['rmfo', "AbsoluteForceSensor"])
-                except:
-                    print "Component rmfo is not loadable."
+            elif "AbsoluteForceSensor" in self.ms.get_factory_names():
+                rtclist.append(['rmfo', "AbsoluteForceSensor"])
+            else:
+                print "Component rmfo is not loadable."
         return rtclist
 
     # hand interface
@@ -621,7 +656,7 @@ class HIRONX(HrpsysConfigurator):
         if self.sc_svc:
             self.sc_svc.servoOn()
 
-    def startImpedance(self, arm,
+    def startImpedance_315_1(self, arm,
                        M_p = 100.0,
                        D_p = 100.0,
                        K_p = 100.0,
@@ -668,7 +703,7 @@ class HIRONX(HrpsysConfigurator):
                 reference_gain = reference_gain,
                 manipulability_limit = manipulability_limit))
 
-    def stopImpedance(self, arm):
+    def stopImpedance_315_1(self, arm):
         ic_sensor_name = 'rhsensor'
         if arm == 'rarm':
             ic_sensor_name = 'rhsensor'
@@ -678,6 +713,50 @@ class HIRONX(HrpsysConfigurator):
             print 'startImpedance: argument must be rarm or larm.'
             return
         self.ic_svc.deleteImpedanceControllerAndWait(ic_sensor_name)
+
+    def startImpedance_315_2(self, arm,
+                       M_p = 100.0,
+                       D_p = 100.0,
+                       K_p = 100.0,
+                       M_r = 100.0,
+                       D_r = 2000.0,
+                       K_r = 2000.0,
+                       force_gain = [1, 1, 1],
+                       moment_gain = [0, 0, 0],
+                       sr_gain = 1.0,
+                       avoid_gain = 0.0,
+                       reference_gain = 0.0,
+                       manipulability_limit = 0.1):
+        self.ic_svc.setImpedanceControllerParam(
+            arm,
+            OpenHRP.ImpedanceControllerService.impedanceParam(
+                M_p = M_p,
+                D_p = D_p,
+                K_p = K_p,
+                M_r = M_r,
+                D_r = D_r,
+                K_r = K_r,
+                force_gain = force_gain,
+                moment_gain = moment_gain,
+                sr_gain = sr_gain,
+                avoid_gain = avoid_gain,
+                reference_gain = reference_gain,
+                manipulability_limit = manipulability_limit))
+        return self.ic_svc.startImpedanceController(arm)
+
+    def stopImpedance_315_2(self, arm):
+        return self.ic_svc.stopImpedanceController(arm)
+
+    def startImpedance(self, arm, **kwargs):
+        if self.hrpsys_version < '315.2.0':
+            self.startImpedance_315_1(arm, **kwargs)
+        else:
+            self.startImpedance_315_2(arm, **kwargs)
+    def stopImpedance(self, arm):
+        if self.hrpsys_version < '315.2.0':
+            self.stopImpedance_315_1(arm)
+        else:
+            self.stopImpedance_315_2(arm)
 
     def removeForceSensorOffset(self):
         self.rh_svc.removeForceSensorOffset()
