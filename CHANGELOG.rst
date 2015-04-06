@@ -2,6 +2,11 @@
 Changelog for package hironx_calibration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.29 (2015-04-06)
+-------------------
+* Minor pkg description correction.
+* Contributors: Isaac IY Saito
+
 1.0.28 (2015-02-06)
 -------------------
 
