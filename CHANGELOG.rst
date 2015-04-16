@@ -2,6 +2,9 @@
 Changelog for package hironx_calibration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.30 (2015-04-16)
+-------------------
+
 1.0.29 (2015-04-06)
 -------------------
 * Minor pkg description correction.
