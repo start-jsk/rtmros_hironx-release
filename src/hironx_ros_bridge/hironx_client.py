@@ -149,16 +149,18 @@ class HIRONX(HrpsysConfigurator):
         @type robotname: str
         @type url: str
         '''
+        # reload for hrpsys 315.1.8
+        HrpsysConfigurator.waitForModelLoader(self)
+        HrpsysConfigurator.waitForRTCManagerAndRoboHardware(self, robotname=robotname)
+        if len(self.ms.ref.get_component_profiles()) > 0 and self.ms.ref.get_component_profiles()[0].version < '315.2.0':
+            sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), 'hrpsys_315_1_9/hrpsys'))
+            delete_module('ImpedanceControllerService_idl')
+            import AbsoluteForceSensorService_idl
+            import ImpedanceControllerService_idl
+
         HrpsysConfigurator.init(self, robotname=robotname, url=url)
         self.setSelfGroups()
         self.hrpsys_version = self.fk.ref.get_component_profile().version
-
-        # reload for hrpsys 315.1.8
-        if self.hrpsys_version < '315.2.0':
-            delete_module('ImpedanceControllerService_idl')
-            sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), 'hrpsys_315_1_9/hrpsys'))
-            import ImpedanceControllerService_idl
-            self.ic_svc = narrow(self.ic.service("service0"), "ImpedanceControllerService")
 
         # connect ic if needed
         for sensor in ['lhsensor' , 'rhsensor']:
@@ -742,38 +744,6 @@ class HIRONX(HrpsysConfigurator):
                 avoid_gain = avoid_gain,
                 reference_gain = reference_gain,
                 manipulability_limit = manipulability_limit))
-        return self.ic_svc.startImpedanceController(arm)
-
-    def startImpedance_315_3(self, arm,
-                       M_p = 100.0,
-                       D_p = 100.0,
-                       K_p = 100.0,
-                       M_r = 100.0,
-                       D_r = 2000.0,
-                       K_r = 2000.0,
-                       force_gain = [1, 1, 1],
-                       moment_gain = [0, 0, 0],
-                       sr_gain = 1.0,
-                       avoid_gain = 0.0,
-                       reference_gain = 0.0,
-                       manipulability_limit = 0.1,
-                       controller_mode = OpenHRP.ImpedanceControllerService.MODE_IMP):
-        self.ic_svc.setImpedanceControllerParam(
-            arm,
-            OpenHRP.ImpedanceControllerService.impedanceParam(
-                M_p = M_p,
-                D_p = D_p,
-                K_p = K_p,
-                M_r = M_r,
-                D_r = D_r,
-                K_r = K_r,
-                force_gain = force_gain,
-                moment_gain = moment_gain,
-                sr_gain = sr_gain,
-                avoid_gain = avoid_gain,
-                reference_gain = reference_gain,
-                manipulability_limit = manipulability_limit,
-                controller_mode = controller_mode))
         return self.ic_svc.startImpedanceController(arm)
 
     def startImpedance_315_3(self, arm,
