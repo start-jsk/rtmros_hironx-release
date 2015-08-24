@@ -2,6 +2,11 @@
 Changelog for package hironx_ros_bridge
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.36 (2015-08-24)
+-------------------
+* [feat] Add dual-arm moveit group
+* Contributors: Isaac IY Saito
+
 1.0.35 (2015-08-14)
 -------------------
 * [feat] show Hrpsys host controller version info
