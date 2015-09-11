@@ -2,6 +2,11 @@
 Changelog for package hironx_ros_bridge
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.37 (2015-09-11)
+-------------------
+* [test] Optimize rostest time-limit 
+* Contributors: Shunichi Nozawa
+
 1.0.36 (2015-08-24)
 -------------------
 * [feat] Add dual-arm moveit group
