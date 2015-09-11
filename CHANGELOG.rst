@@ -2,6 +2,9 @@
 Changelog for package hironx_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.37 (2015-09-11)
+-------------------
+
 1.0.36 (2015-08-24)
 -------------------
 * [feat] Add dual-arm moveit group
