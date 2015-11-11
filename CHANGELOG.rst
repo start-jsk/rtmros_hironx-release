@@ -2,6 +2,9 @@
 Changelog for package hironx_calibration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.1.2 (2015-11-11)
+------------------
+
 1.1.1 (2015-11-02)
 ------------------
 * [fix] Install a missing launch file
