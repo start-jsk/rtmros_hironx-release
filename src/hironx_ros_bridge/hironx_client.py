@@ -140,6 +140,10 @@ class HIRONX(HrpsysConfigurator):
 
     hrpsys_version = '0.0.0'
 
+    _MSG_IMPEDANCE_CALL_DONE = (" call is done. This does't necessarily mean " +
+                               "the function call was successful, since not " +
+                               "all methods internally called return status")
+
     def init(self, robotname="HiroNX(Robot)0", url=""):
         '''
         Calls init from its superclass, which tries to connect RTCManager,
@@ -567,7 +571,7 @@ class HIRONX(HrpsysConfigurator):
         print 'Turn on Hand Servo'
         if self.sc_svc:
             is_servoon = self.sc_svc.servoOn()
-            print('Hands Servo on: ' + is_servoon)
+            print('Hands Servo on: ' + str(is_servoon))
             if not is_servoon:
                 print('One or more hand servos failed to turn on. Make sure all hand modules are properly cabled ('
                       + _MSG_RESTART_QNX + ') and run the command again.')
@@ -820,6 +824,7 @@ class HIRONX(HrpsysConfigurator):
             self.startImpedance_315_2(arm, **kwargs)
         else:
             self.startImpedance_315_3(arm, **kwargs)
+        print('startImpedance {}'.format(self._MSG_IMPEDANCE_CALL_DONE))
 
     def stopImpedance(self, arm):
         if self.hrpsys_version < '315.2.0':
@@ -828,6 +833,7 @@ class HIRONX(HrpsysConfigurator):
             self.stopImpedance_315_2(arm)
         else:
             self.stopImpedance_315_3(arm)
+        print('stopImpedance {}'.format(self._MSG_IMPEDANCE_CALL_DONE))
 
     def removeForceSensorOffset(self):
         self.rh_svc.removeForceSensorOffset()
