@@ -2,6 +2,12 @@
 Changelog for package hironx_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.1.4 (2016-01-25)
+------------------
+* [sys][moveit config] Enable unit test for ROS_Client-RobotCommander integration
+  Missing dependency
+* Contributors: Isaac I.Y. Saito
+
 1.1.3 (2015-12-16)
 ------------------
 
