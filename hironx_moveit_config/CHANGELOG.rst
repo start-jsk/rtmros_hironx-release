@@ -2,6 +2,9 @@
 Changelog for package hironx_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.1.6 (2016-02-03)
+------------------
+
 1.1.5 (2016-01-26)
 ------------------
 * [feat][ROS_CLient] Upperbody move group.
