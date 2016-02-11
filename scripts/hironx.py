@@ -33,6 +33,7 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import socket
 
 try:  # catkin does not requires load_manifest
     import hironx_ros_bridge
@@ -75,7 +76,10 @@ if __name__ == '__main__':
     robot.init(robotname=args.robot, url=args.modelfile)
 
     # ROS Client
-    ros = ROS_Client()
+    try:
+        ros = ROS_Client()
+    except socket.error as e:
+        print("\033[31m%s\033[0m" % (e.strerror))
 
 # for simulated robot
 # $ ./hironx.py
