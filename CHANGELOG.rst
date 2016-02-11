@@ -2,6 +2,19 @@
 Changelog for package rtmros_hironx
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.1.10 (2016-02-11)
+-------------------
+
+1.1.9 (2016-02-11)
+------------------
+* [fix] test_depend on unittest seems no longer necessary Indigo onward
+* Contributors: Isaac I.Y. Saito
+
+1.1.8 (2016-02-09)
+------------------
+* [fix][ROS_Client] Correctly import termcolor. Better error handling (Fix `#436 <https://github.com/start-jsk/rtmros_hironx/issues/436>`_)
+* Contributors: Isaac I.Y. Saito
+
 1.1.7 (2016-02-05)
 ------------------
 * [fix] ROS py client gets stuck when ros master is not running (`#430 <https://github.com/start-jsk/rtmros_hironx/issues/430>`_)
