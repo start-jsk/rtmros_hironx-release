@@ -2,6 +2,13 @@
 Changelog for package hironx_ros_bridge
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.1.12 (2016-05-05)
+-------------------
+* [fix][RTM py] Remove redundant connection for impedance controller RTC.
+* [fix][ROS py] fix segfault on ros_client exit.
+* [feat] Add QNX driver for Dynpick F/T sensor.
+* Contributors: Isaac Kei Okada, I.Y. Saito
+
 1.1.11 (2016-02-18)
 -------------------
 * [fix][rqt dashboard] Enable to connect remote RTM nameserver (Fix #429)
