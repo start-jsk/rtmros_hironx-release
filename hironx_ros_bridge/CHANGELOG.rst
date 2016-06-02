@@ -2,6 +2,9 @@
 Changelog for package hironx_ros_bridge
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.1.15 (2016-06-02)
+-------------------
+
 1.1.14 (2016-05-19)
 -------------------
 * [fix] remove duplicate functions, put them in upstream
