@@ -2,6 +2,9 @@
 Changelog for package hironx_calibration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.1.24 (2017-05-09)
+-------------------
+
 1.1.23 (2017-04-03)
 -------------------
 * [doc][calib] Cleanup pkg description.
