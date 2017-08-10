@@ -2,6 +2,9 @@
 Changelog for package rtmros_hironx
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.0.0 (2017-08-10)
+------------------
+
 1.1.25 (2017-06-02)
 -------------------
 * [QNX log fetch] Fix to get it working again.
