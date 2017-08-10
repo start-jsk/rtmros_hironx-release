@@ -1,6 +1,6 @@
 <package>
   <name>hironx_ros_bridge</name>
-  <version>1.1.25</version>
+  <version>2.0.0</version>
   <description>ROS-OpenRTM interfacing package for the opensource version of Kawada's Hiro/NEXTAGE dual-arm robot.
 
   NOTE: This package is multi-license -- pay attention to file header in each file where license is declared. For Creative Commons nc 4.0 applied, see <a href = "http://creativecommons.org/licenses/by-nc/4.0">here</a>.
@@ -23,7 +23,6 @@
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>hrpsys_ros_bridge</build_depend> <!-- Needed to transitively depend on openhrp3. See https://github.com/start-jsk/rtmros_hironx/pull/30#commitcomment-5535604 -->
   <build_depend>mk</build_depend>
-  <build_depend>pr2_controllers_msgs</build_depend>
   <build_depend>control_msgs</build_depend>
   <build_depend>roslib</build_depend>
   <build_depend>roslint</build_depend>
@@ -37,7 +36,6 @@
   <run_depend>moveit_commander</run_depend>
   <run_depend>hrpsys_ros_bridge</run_depend>
   <run_depend>openni2_launch</run_depend>
-  <run_depend>pr2_controllers_msgs</run_depend>
   <run_depend>control_msgs</run_depend>
   <run_depend>roslib</run_depend>
   <run_depend>rosbash</run_depend>
