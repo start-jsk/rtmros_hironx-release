@@ -1,3 +1,30 @@
+## rtmros_hironx (indigo) - 2.1.0-0
+
+The packages in the `rtmros_hironx` repository were released into the `indigo` distro by running `/usr/bin/bloom-release rtmros_hironx --track indigo --rosdistro indigo` on `Thu, 07 Sep 2017 04:04:54 -0000`
+
+These packages were released:
+- `hironx_calibration`
+- `hironx_moveit_config`
+- `hironx_ros_bridge`
+- `rtmros_hironx`
+
+Version of package(s) in repository `rtmros_hironx`:
+
+- upstream repository: https://github.com/start-jsk/rtmros_hironx.git
+- release repository: https://github.com/tork-a/rtmros_hironx-release.git
+- rosdistro version: `2.0.0-0`
+- old version: `2.0.0-0`
+- new version: `2.1.0-0`
+
+Versions of tools used:
+
+- bloom version: `0.5.26`
+- catkin_pkg version: `0.3.6`
+- rosdep version: `0.11.8`
+- rosdistro version: `0.6.2`
+- vcstools version: `0.1.39`
+
+
 ## rtmros_hironx (kinetic) - 2.0.0-0
 
 The packages in the `rtmros_hironx` repository were released into the `kinetic` distro by running `/usr/bin/bloom-release rtmros_hironx --rosdistro kinetic --track kinetic` on `Thu, 10 Aug 2017 02:44:48 -0000`
