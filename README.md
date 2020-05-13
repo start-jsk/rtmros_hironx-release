@@ -1,3 +1,30 @@
+## rtmros_hironx (melodic) - 2.2.0-1
+
+The packages in the `rtmros_hironx` repository were released into the `melodic` distro by running `/usr/bin/bloom-release rtmros_hironx --track melodic --rosdistro melodic -y` on `Wed, 13 May 2020 12:18:42 -0000`
+
+These packages were released:
+- `hironx_calibration`
+- `hironx_moveit_config`
+- `hironx_ros_bridge`
+- `rtmros_hironx`
+
+Version of package(s) in repository `rtmros_hironx`:
+
+- upstream repository: https://github.com/start-jsk/rtmros_hironx.git
+- release repository: unknown
+- rosdistro version: `null`
+- old version: `null`
+- new version: `2.2.0-1`
+
+Versions of tools used:
+
+- bloom version: `0.9.7`
+- catkin_pkg version: `0.4.18`
+- rosdep version: `0.19.0`
+- rosdistro version: `0.8.1`
+- vcstools version: `0.1.42`
+
+
 ## rtmros_hironx (kinetic) - 2.1.1-0
 
 The packages in the `rtmros_hironx` repository were released into the `kinetic` distro by running `/usr/bin/bloom-release -y --skip-pip rtmros_hironx --track kinetic --rosdistro kinetic` on `Wed, 20 Feb 2019 03:27:03 -0000`
