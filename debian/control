@@ -1,0 +1,13 @@
+Source: ros-melodic-hironx-ros-bridge
+Section: misc
+Priority: optional
+Maintainer: Kei Okada <k-okada@jsk.t.u-tokyo.ac.jp>
+Build-Depends: debhelper (>= 9.0.0), gnuplot, ros-melodic-catkin, ros-melodic-control-msgs, ros-melodic-hrpsys-ros-bridge, ros-melodic-mk, ros-melodic-rosbash, ros-melodic-rosbuild, ros-melodic-roslang, ros-melodic-roslib, ros-melodic-roslint, unzip
+Homepage: http://ros.org/wiki/hironx_ros_bridge
+Standards-Version: 3.9.2
+
+Package: ros-melodic-hironx-ros-bridge
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, gnuplot, ros-melodic-control-msgs, ros-melodic-hrpsys-ros-bridge, ros-melodic-moveit-commander, ros-melodic-openni2-launch, ros-melodic-rosbash, ros-melodic-roslang, ros-melodic-roslib, ros-melodic-rospy, ros-melodic-tf
+Description: ROS-OpenRTM interfacing package for the opensource version of Kawada's Hiro/NEXTAGE dual-arm robot.
+ NOTE: This package is multi-license -- pay attention to file header in each file where license is declared. For Creative Commons nc 4.0 applied, see here. This package also contains some sensor driver software (as of April 2016 they are the following force sensors such as Dynpick and JR3) for QNX. These drivers are stored in this robot-specific package for not many reasons than they are slightly customized for the robot. So if you can separate those as a standalone, generic package that'll be appreciated (please just let us know if you will).
